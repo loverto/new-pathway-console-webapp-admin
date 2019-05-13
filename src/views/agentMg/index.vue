@@ -1,11 +1,11 @@
 <template>
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
-      <!-- <el-form-item label="用户名称:">
-        <el-input placeholder="用户名称" clearable/>
-      </el-form-item> -->
+      <el-form-item label="用户:">
+        <el-input v-model="currentSearch" placeholder="查找 用户" clearable/>
+      </el-form-item>
       <el-form-item>
-        <!-- <el-button type="success" icon="el-icon-search">查询</el-button> -->
+        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
         <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加用户</el-button>
       </el-form-item>
     </el-form>
@@ -147,7 +147,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">新增</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">{{ maskTitle }}</el-button>
 
       </div>
     </el-dialog>
@@ -174,6 +174,7 @@ export default {
     }
     return {
       list: [],
+      currentSearch: '',
       roleOptions: [],
       total: 0,
       listLoading: true,
@@ -247,6 +248,50 @@ export default {
         }
       })
     },
+    clean() {
+      this.page = 0
+      this.currentSearch = ''
+      this.$router.push({
+        path: '/agents/index',
+        query: {
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }
+      })
+      this.loadAll()
+    },
+    loadAll() {
+      if (this.currentSearch) {
+        this.listLoading = true
+        Api.getSearchList({
+          query: this.currentSearch,
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }).then(response => {
+          this.list = response.data
+          this.total = Number(response.headers['x-total-count']) || 0
+          this.listLoading = false
+        })
+        return
+      }
+      this.getList()
+    },
+    search(query) {
+      if (!query) {
+        return this.clean()
+      }
+      this.page = 0
+      this.currentSearch = query
+      this.$router.push({
+        path: '/agents/index',
+        query: {
+          search: this.currentSearch,
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }
+      })
+      this.loadAll()
+    },
     handleActived(row) {
       const r = JSON.parse(JSON.stringify(row))
       r.activated = true
@@ -258,24 +303,37 @@ export default {
       this.modify(r)
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          Api.register(this.ruleForm).then(response => {
-            if (response.status === 201) {
-              this.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              this.showMask = false
-              this.getList()
-            }
-          }).catch(err => {
-            console.error(err)
-          })
-        } else {
-          return false
-        }
-      })
+      if (this.maskTitle === '新增') {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            Api.register(this.ruleForm).then(response => {
+              if (response.status === 201) {
+                this.$message({
+                  message: '保存成功！',
+                  type: 'success'
+                })
+                this.showMask = false
+                this.getList()
+              }
+            }).catch(err => {
+              console.error(err)
+            })
+          } else {
+            return false
+          }
+        })
+      } else {
+        Api.modify(this.ruleForm).then(response => {
+          if (response.status === 200) {
+            this.$message({
+              message: '修改成功！',
+              type: 'success'
+            })
+            this.showMask = false
+            this.getList()
+          }
+        })
+      }
     },
     resetPwd(row) {
       this.$confirm('确定要重置密码吗?', '提示', {

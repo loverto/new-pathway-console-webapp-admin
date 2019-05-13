@@ -1,10 +1,10 @@
-Deju build with vue@2.0
+new-pathway build with vue@2.0
 
 ## 开发
 
 ```bash
 # 克隆项目
-git clone https://github.com/gongph/deju-webapp-admin.git
+git clone https://gitlab.com/flydragon/new-pathway-webapp-admin.git
 
 # 安装依赖
 npm install

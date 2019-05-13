@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <canvas id="starCanvas" class="canvas-star"></canvas>
+    <canvas id="starCanvas" class="canvas-star"/>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
@@ -64,6 +64,7 @@ import { startDraw } from '@/utils/canvas-star'
 export default {
   name: 'Login',
   data() {
+    // eslint-disable-next-line no-unused-vars
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
         callback(new Error('请输入正确的用户名'))
@@ -78,10 +79,11 @@ export default {
         rememberMe: true
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'blur', message: '密码不能为空' }],
         password: [
-          { required: true, trigger: 'blur', message: '密码不能为空'},
-          { min: 5, trigger: 'blur', message: '请输入5位以上的有效密码'}
+          { required: true, trigger: 'blur', message: '密码不能为空' },
+          { min: 4, trigger: 'blur', message: '请输入4位以上的有效密码' },
+          { max: 100, trigger: 'blur', message: '请输入100位以下的有效密码' }
         ]
       },
       passwordType: 'password',

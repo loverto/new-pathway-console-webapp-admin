@@ -18,6 +18,17 @@ export function getList(query) {
 /**
  * 获取用户列表
  */
+export function getSearchList(query) {
+  return request({
+    url: 'api/_search/users',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
+ * 获取用户列表
+ */
 export function getWorkList(query) {
   return request({
     url: '/api/users/works',
