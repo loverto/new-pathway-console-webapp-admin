@@ -1,11 +1,11 @@
 /**
- * 电脑品牌接口
+ * 品牌接口
  */
 
 import request from '@/utils/request'
 
 /**
- * 获取电脑品牌列表
+ * 获取品牌列表
  */
 export function getList(query) {
   return request({
@@ -16,7 +16,7 @@ export function getList(query) {
 }
 
 /**
- * 新增或更新电脑品牌
+ * 新增或更新品牌
  */
 
 export function saveOrUpdate(data, method = 'post') {

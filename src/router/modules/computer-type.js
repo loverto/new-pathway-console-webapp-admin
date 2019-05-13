@@ -5,10 +5,10 @@ import Layout from '@/views/layout/Layout'
 const roles = ['ROLE_ADMIN']
 
 const productRouter = {
-  path: '/products',
+  path: '/computer-types',
   component: Layout,
-  redirect: '/products/index',
-  name: 'Products',
+  redirect: '/computer-types/index',
+  name: 'ComputerTypes',
   meta: {
     title: '系统功能',
     icon: 'component'
@@ -16,21 +16,21 @@ const productRouter = {
   children: [
     {
       path: 'index',
-      component: () => import('@/views/productMg/index'),
-      name: 'ProductList',
+      component: () => import('@/views/computerTypeMg/index'),
+      name: 'ComputerTypesList',
       meta: {
-        title: '电脑品牌管理',
+        title: '品牌管理',
         icon: 'list',
         roles
       }
     },
     {
-      path: '/product/add',
+      path: '/computer-type/add',
       hidden: true,
-      component: () => import('@/views/productMg/add'),
-      name: 'FontList',
+      component: () => import('@/views/computerTypeMg/add'),
+      name: 'ComputerTypesAdd',
       meta: {
-        title: '电脑品牌新增',
+        title: '品牌新增',
         icon: 'form',
         roles
       }
@@ -40,7 +40,7 @@ const productRouter = {
       component: () => import('@/views/fontMg/index'),
       name: 'FontList',
       meta: {
-        title: '字体类型管理',
+        title: '字体管理',
         icon: 'form',
         roles
       }
@@ -51,7 +51,7 @@ const productRouter = {
       component: () => import('@/views/fontMg/add'),
       name: 'FontAdd',
       meta: {
-        title: '字体类型新增',
+        title: '字体新增',
         icon: 'form',
         roles
       }
@@ -62,18 +62,28 @@ const productRouter = {
       component: () => import('@/views/fontMg/edit'),
       name: 'FontEdit',
       meta: {
-        title: '字体类型编辑',
+        title: '字体编辑',
         icon: 'form',
         roles
       }
     },
     {
-      path: '/product/edit',
+      path: '/computer-type/edit',
       hidden: true,
-      component: () => import('@/views/productMg/edit'),
-      name: 'ProductEdit',
+      component: () => import('@/views/computerTypeMg/edit'),
+      name: 'ComputerTypesEdit',
       meta: {
-        title: '编辑电脑品牌',
+        title: '电脑品牌',
+        icon: 'edit',
+        roles
+      }
+    },
+    {
+      path: '/computer-type/settings',
+      component: () => import('@/views/configMg/settings'),
+      name: 'Settings',
+      meta: {
+        title: '参数设置',
         icon: 'edit',
         roles
       }

@@ -7,12 +7,13 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* 业务路由 */
-import productRouter from './modules/product'
-import bannerRouter from './modules/banner'
+import productRouter from './modules/computer-type'
+import diePatternRouter from './modules/die-pattern'
 import agentRouter from './modules/agent'
 import auditRouter from './modules/audit'
 import picRouter from './modules/pic'
 import custom from './modules/custom'
+import dataRouter from './modules/data'
 // import rateRouter from './modules/rate'
 
 /** note: Submenu only appear when children.length>=1
@@ -89,9 +90,10 @@ export default new Router({
 export const asyncRouterMap = [
   productRouter,
   agentRouter,
-  auditRouter,
-  bannerRouter,
+  // auditRouter,
+  diePatternRouter,
   custom,
-  picRouter,
+  dataRouter,
+  // picRouter,
   { path: '*', redirect: '/404', hidden: true }
 ]

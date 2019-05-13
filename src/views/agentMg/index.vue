@@ -1,12 +1,12 @@
 <template>
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
-      <!-- <el-form-item label="代理商名称:">
-        <el-input placeholder="代理商名称" clearable/>
+      <!-- <el-form-item label="用户名称:">
+        <el-input placeholder="用户名称" clearable/>
       </el-form-item> -->
       <el-form-item>
         <!-- <el-button type="success" icon="el-icon-search">查询</el-button> -->
-        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加代理商</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加用户</el-button>
       </el-form-item>
     </el-form>
 
@@ -17,32 +17,44 @@
         width="50"
       />
 
-      <el-table-column align="center" label="代理商名称">
+      <el-table-column align="center" label="用户姓名" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.firstName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="登录账号">
+      <el-table-column align="center" label="代理名称" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lastName }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="登录账号" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.login }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="常用邮箱">
+      <el-table-column align="center" label="联系电话" width="200">
+        <template slot-scope="scope">
+          <span>{{ scope.row.imageUrl }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="常用邮箱" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="是否激活">
+      <el-table-column align="center" label="是否激活" width="100">
         <template slot-scope="scope">
           <span v-if="scope.row.activated">激活</span>
           <span v-else>未激活</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="创建人">
+      <el-table-column align="center" label="创建人" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.createdBy }}</span>
         </template>
@@ -54,12 +66,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="220">
+      <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="resetPwd(scope.row)">
             <svg-icon icon-class="password"/> 重置密码
           </el-button>
-          <!-- <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button> -->
+          <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button
             v-if="scope.row.activated"
             type="danger"
@@ -82,16 +94,35 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <!-- 新增编辑代理商弹框 -->
+    <!-- 新增编辑用户弹框 -->
     <el-dialog v-if="showMask" :visible.sync="showMask" :title="maskTitle" width="350px">
       <div class="dialog-form__wrapper">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
-          <el-form-item label="代理商名称:" prop="firstName">
-            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="代理商名字"/>
+          <el-form-item label="用户名称:" prop="firstName">
+            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="用户姓名"/>
+          </el-form-item>
+
+          <el-form-item label="代理名称:" prop="lastName">
+            <el-input v-model="ruleForm.lastName" class="width-192" placeholder="代理名称"/>
+          </el-form-item>
+
+          <el-form-item label="联系电话:" prop="lastName">
+            <el-input v-model="ruleForm.imageUrl" class="width-192" placeholder="联系电话"/>
           </el-form-item>
 
           <el-form-item label="登录账号:" prop="login">
             <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号"/>
+          </el-form-item>
+
+          <el-form-item label="角色:" prop="login">
+            <el-select v-model="ruleForm.authorities" multiple class="width-192" placeholder="请选择">
+              <el-option
+                v-for="item in roleOptions"
+                :key="item"
+                :label="formatRole(item)"
+                :value="item"
+              />
+            </el-select>
           </el-form-item>
 
           <template v-if="maskTitle !== '编辑'">
@@ -117,6 +148,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="resetForm('ruleForm')">取消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">新增</el-button>
+
       </div>
     </el-dialog>
   </div>
@@ -124,6 +156,7 @@
 
 <script>
 import * as Api from '@/api/agent'
+import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'AgentList',
@@ -141,6 +174,7 @@ export default {
     }
     return {
       list: [],
+      roleOptions: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -170,6 +204,7 @@ export default {
   created() {
     this.resetRuleForm()
     this.getList()
+    this.getRoleList()
   },
   methods: {
     getList() {
@@ -181,6 +216,11 @@ export default {
         this.list = response.data
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
+      })
+    },
+    getRoleList() {
+      Api.getRoleList().then(response => {
+        this.roleOptions = response.data
       })
     },
     handleSizeChange(val) {
@@ -278,6 +318,9 @@ export default {
     },
     resetForm() {
       this.showMask = false
+    },
+    formatRole(val) {
+      return types.get(val)
     }
   }
 }

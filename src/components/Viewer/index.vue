@@ -1,6 +1,6 @@
 <template>
   <div class="viewer">
-    <img :src="imgSrc" @click="click($event)" :style="styleClass">
+    <img :src="imgSrc" :style="styleClass" @click="click($event)">
   </div>
 </template>
 
@@ -11,8 +11,25 @@ import Viewer from 'viewerjs'
 export default {
   name: 'Viewer',
   props: {
-    imgSrc: String,
-    width: Number
+    imgSrc: {
+      type: String,
+      required: false,
+      default: 'http://th.minio.boyuanziben.cn/boyuanziben/default.jpg'
+    },
+    width: {
+      type: Number,
+      required: false,
+      default: 100
+    },
+    zoom: {
+      type: Number,
+      default: 0.3
+    }
+  },
+  data() {
+    return {
+      prevTarget: null
+    }
   },
   computed: {
     styleClass() {
@@ -35,20 +52,26 @@ export default {
           // prev: 4,
           play: {
             show: 4,
-            size: 'large',
+            size: 'large'
           },
           // next: 4,
           rotateLeft: 4,
           rotateRight: 4,
           flipHorizontal: 4,
-          flipVertical: 4,
+          flipVertical: 4
         },
         viewed() {
-          viewer.zoomTo(0.3)
+          viewer.zoomTo(this.zoom)
+        },
+        hide() {
+          viewer.destroy()
         }
       })
       viewer.show(true)
     }
+  },
+  beforeDestory() {
+    console.log('coming...')
   }
 }
 </script>

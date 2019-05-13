@@ -1,7 +1,7 @@
 <template>
   <div class="app-container product-wrapper">
-    <router-link to="/product/add">
-      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加电脑品牌</el-button>
+    <router-link to="/computer-type/add">
+      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加品牌</el-button>
     </router-link>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
@@ -25,7 +25,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="电脑品牌">
+      <el-table-column align="center" label="品牌">
         <template slot-scope="scope">
           <span>{{ scope.row.value }}</span>
         </template>
@@ -49,7 +49,7 @@
     <el-dialog
       v-if="showMask"
       :visible.sync="showMask"
-      title="编辑电脑品牌"
+      title="编辑品牌"
       top="5vh"
       class="product-edit__dialog"
       @close="handleClose"
@@ -61,8 +61,8 @@
 </template>
 
 <script>
-import * as Api from '@/api/product'
-import { types } from '@/utils/loan.js'
+import * as Api from '@/api/computer-type'
+import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
 export default {
@@ -101,7 +101,6 @@ export default {
       }
       Api.getList(data).then(response => {
         this.list = response.data
-        debugger
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })

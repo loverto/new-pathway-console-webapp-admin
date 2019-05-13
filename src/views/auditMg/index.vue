@@ -243,7 +243,7 @@
 </template>
 
 <script>
-import { getAudits, updateAudits } from '@/api/product'
+import { getAudits, updateAudits } from '@/api/computer-type'
 import Pagination from '@/components/Pagination'
 import Viewer from '@/components/Viewer'
 import ApplyDetailInfo from './apply-detail-info.vue'

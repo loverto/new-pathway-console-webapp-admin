@@ -10,7 +10,7 @@ const agentRouter = {
   redirect: '/agents/index',
   meta: {
     title: '关于用户',
-    icon: 'example'
+    icon: 'user'
   },
   children: [
     {
@@ -29,7 +29,7 @@ const agentRouter = {
       name: 'AuditList',
       meta: {
         title: '审核信息',
-        icon: 'peoples',
+        icon: 'edit',
         roles
       }
     }

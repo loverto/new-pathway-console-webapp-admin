@@ -7,21 +7,34 @@
             <svg-icon icon-class="peoples" class-name="card-panel-icon" />
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">代理商人数</div>
+            <div class="card-panel-text">用户人数</div>
             <count-to :start-val="0" :end-val="agentNumber" :duration="2600" class="card-panel-num"/>
           </div>
         </div>
       </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <router-link to="/audits/index">
+      <router-link to="/customs/index">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
             <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
-            <div class="card-panel-text">待审核工单</div>
+            <div class="card-panel-text">待确认定单</div>
             <count-to :start-val="0" :end-val="order" :duration="3000" class="card-panel-num"/>
+          </div>
+        </div>
+      </router-link>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <router-link to="/custom/manager">
+        <div class="card-panel" @click="handleSetLineChartData('messages')">
+          <div class="card-panel-icon-wrapper icon-message">
+            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">定单数</div>
+            <count-to :start-val="0" :end-val="cust" :duration="3000" class="card-panel-num"/>
           </div>
         </div>
       </router-link>
@@ -31,7 +44,8 @@
 
 <script>
 import CountTo from 'vue-count-to'
-import { getList, getAudits } from '@/api/dashboard'
+import { getList } from '@/api/dashboard'
+import * as Api from '@/api/custom-template'
 
 export default {
   components: {
@@ -39,7 +53,8 @@ export default {
   }, data() {
     return {
       agentNumber: 0,
-      order: 0
+      order: 0,
+      cust: 0
     }
   },
   created() {
@@ -56,14 +71,11 @@ export default {
       })
     },
     orderList() {
-      const data = {
-        page: 0,
-        size: 1000000,
-        sort: 'createdDate,desc'
-      }
-      data.auditStatus = 'PENDINGREVIEW'
-      getAudits().then(response => {
+      Api.getListByCustomState(1, { page: 0, size: 1 }).then(response => {
         this.order = Number(response.headers['x-total-count']) || 0
+      })
+      Api.getList({ page: 0, size: 1 }).then(response => {
+        this.cust = Number(response.headers['x-total-count']) || 0
       })
     }
   }

@@ -6,19 +6,19 @@
 const Minio = require('minio')
 const fileReaderStream = require('filereader-stream')
 import { getUuid } from './index.js'
+import config from './config.js'
 import { getMinioToken } from '@/api/minio'
 
 // Init config
 let minioClient = null
-const bucketName = 'boyuanziben'
-// if (process.env.NODE_ENV === 'development') {
-//   minioClient = new Minio.Client(config.dev.minioConfig)
-// } else {
+const defaultBucketName = 'boyuanziben'
+
 getMinioToken().then(response => {
   if (response && response.data) {
-    const { region, port, useSSL, ...conf } = response.data // eslint-disable-line no-unused-vars
+    /* eslint-disable */
+    const { region, port, useSSL, ...conf } = response.data
     minioClient = new Minio.Client(
-      Object.assign({ useSSL: useSSL === 'true' }, conf)
+      Object.assign({ useSSL: useSSL === 'true' ? true : false }, conf)
     )
   }
 })
@@ -34,7 +34,7 @@ export function list() {
 /**
  * 上传
  */
-export function uploader(file) {
+export function uploader(bucketName = defaultBucketName, file) {
   if (!file) return
 
   // 扩展名
@@ -91,13 +91,13 @@ export function previewImage(url, thumbnailSize) {
  * 获取图片完整路径
  */
 export function getFullPath(url) {
-  return `http://th.minio.boyuanziben.cn/${url}`
+  return `${config.baseImgUrl}/${url}`
 }
 
 /**
  * 删除图片
  */
-export function removeRemoteImage(fileName) {
+export function removeRemoteImage(bucketName = defaultBucketName, fileName) {
   return new Promise((resolve, reject) => {
     minioClient.removeObject(bucketName, fileName, (err) => {
       if (err) {

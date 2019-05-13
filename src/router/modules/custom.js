@@ -4,7 +4,7 @@ import Layout from '@/views/layout/Layout'
 
 const roles = ['ROLE_ADMIN']
 
-const bannerRouter = {
+const customRouter = {
   path: '/customs',
   component: Layout,
   redirect: '/customs/index',
@@ -26,7 +26,7 @@ const bannerRouter = {
     },
     {
       path: '/custom-template/make',
-      component: () => import('@/views/customTemplateMg/add'),
+      component: () => import('@/views/customTemplateMg/made'),
       name: 'makeCustom',
       meta: {
         title: '定单制造',
@@ -36,7 +36,7 @@ const bannerRouter = {
     },
     {
       path: '/custom/add',
-      component: () => import('@/views/customTemplateMg/add'),
+      component: () => import('@/views/customTemplateMg/sent'),
       name: 'CustomSent',
       meta: {
         title: '定单发货',
@@ -45,9 +45,9 @@ const bannerRouter = {
       }
     },
     {
-      path: '/custom/add',
-      component: () => import('@/views/customTemplateMg/add'),
-      name: 'BannerAdd',
+      path: '/custom/manager',
+      component: () => import('@/views/customTemplateMg/manager'),
+      name: 'CustomManager',
       meta: {
         title: '定单管理',
         icon: 'form',
@@ -57,4 +57,4 @@ const bannerRouter = {
   ]
 }
 
-export default bannerRouter
+export default customRouter

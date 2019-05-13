@@ -2,12 +2,12 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="电脑品牌:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="电脑品牌代码值" class="width-50p"/>
+        <el-form-item label="品牌:" prop="name">
+          <el-input v-model="ruleForm.name" placeholder="品牌代码值" class="width-50p"/>
         </el-form-item>
 
-        <el-form-item label="电脑品牌:" prop="value">
-          <el-input v-model="ruleForm.value" placeholder="电脑品牌显示值..." class="width-50p"/>
+        <el-form-item label="品牌:" prop="value">
+          <el-input v-model="ruleForm.value" placeholder="品牌显示值..." class="width-50p"/>
         </el-form-item>
 
         <el-form-item>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { saveOrUpdate } from '@/api/product'
+import { saveOrUpdate } from '@/api/computer-type'
 import { deepClone } from '@/utils'
 
 export default {
@@ -39,7 +39,6 @@ export default {
   data() {
     return {
       ruleForm: {
-        id: 0,
         // 品牌代码值
         name: '',
         // 品牌显示值
@@ -62,7 +61,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-
           // 检查当前是新增还是保存
           let method = 'post'
           if (this.ruleForm.id || this.buttonText === '编辑') {

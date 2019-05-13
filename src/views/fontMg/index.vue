@@ -62,7 +62,7 @@
 
 <script>
 import * as Api from '@/api/font-type'
-import { types } from '@/utils/loan.js'
+import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
 export default {
@@ -101,7 +101,6 @@ export default {
       }
       Api.getList(data).then(response => {
         this.list = response.data
-        debugger
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })

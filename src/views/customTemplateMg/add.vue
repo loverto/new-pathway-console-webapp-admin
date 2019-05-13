@@ -33,14 +33,10 @@
 </template>
 
 <script>
-import { add } from '@/api/banner'
+import { add } from '@/api/die-pattern'
 export default {
   data() {
     return {
-      loanTypes: [{
-        label: '小微贷款',
-        value: 'SMALLMICROLOAN'
-      }],
       ruleForm: {
         title: '',
         description: '',
