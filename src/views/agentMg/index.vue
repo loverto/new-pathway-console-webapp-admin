@@ -2,7 +2,7 @@
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
       <el-form-item label="用户:">
-        <el-input v-model="currentSearch" placeholder="查找 用户" clearable/>
+        <el-input v-model="currentSearch" placeholder="查找 用户" clearable="clear()" />
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
@@ -204,7 +204,7 @@ export default {
   },
   created() {
     this.resetRuleForm()
-    this.getList()
+    this.loadAll()
     this.getRoleList()
   },
   methods: {
@@ -248,16 +248,9 @@ export default {
         }
       })
     },
-    clean() {
+    clear() {
       this.page = 0
       this.currentSearch = ''
-      this.$router.push({
-        path: '/agents/index',
-        query: {
-          page: this.listQuery.page - 1,
-          size: this.listQuery.pageSize
-        }
-      })
       this.loadAll()
     },
     loadAll() {
@@ -278,18 +271,10 @@ export default {
     },
     search(query) {
       if (!query) {
-        return this.clean()
+        return this.clear()
       }
       this.page = 0
       this.currentSearch = query
-      this.$router.push({
-        path: '/agents/index',
-        query: {
-          search: this.currentSearch,
-          page: this.listQuery.page - 1,
-          size: this.listQuery.pageSize
-        }
-      })
       this.loadAll()
     },
     handleActived(row) {
