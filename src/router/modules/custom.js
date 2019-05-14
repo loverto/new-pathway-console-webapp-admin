@@ -35,7 +35,7 @@ const customRouter = {
       }
     },
     {
-      path: '/custom/add',
+      path: '/custom/sent',
       component: () => import('@/views/customTemplateMg/sent'),
       name: 'CustomSent',
       meta: {

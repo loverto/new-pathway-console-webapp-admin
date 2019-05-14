@@ -1,179 +1,223 @@
 <template>
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
-      <!-- <el-form-item label="用户名称:">
-        <el-input placeholder="用户名称" clearable/>
-      </el-form-item> -->
       <el-form-item>
-        <!-- <el-button type="success" icon="el-icon-search">查询</el-button> -->
-        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加用户</el-button>
+        <el-date-picker
+          v-model="currentSearch"
+          :picker-options="pickerOptions"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"/>
+        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
+        <el-select placeholder="选择用户">
+          <el-option
+          />
+        </el-select>
+        <el-button type="success" icon="el-icon-download">导出明细</el-button>
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column
-        align="center"
-        type="index"
-        width="50"
-      />
+    <el-tabs type="border-card">
+      <el-tab-pane label="笔记本">
+        <el-table v-loading="listLoading" :data="bjblist" border fit highlight-current-row style="width: 100%">
+          <el-table-column
+            align="center"
+            type="index"
+            width="50"
+          />
 
-      <el-table-column align="center" label="用户姓名" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.firstName }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="定制编号" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.customNumber }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="品牌" width="70" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.diePattern.computerType.value }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="代理名称" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.lastName }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="笔记本型号">
+            <template slot-scope="scope">
+              <span>{{ scope.row.diePattern.diePatternType }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="登录账号" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.login }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="数量" width="70">
+            <template slot-scope="scope">
+              <span>{{ scope.row.customQuantity }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="联系电话" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.imageUrl }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="淘宝ID" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.taobaoNickname }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="常用邮箱" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="收件人姓名" width="100" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.theRecipientName }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="是否激活" width="100">
-        <template slot-scope="scope">
-          <span v-if="scope.row.activated">激活</span>
-          <span v-else>未激活</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="笔记本" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.modelType.value }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="创建人" width="100">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createdBy }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="用户状态" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.finishedCondition.value }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="创建时间">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
+          <el-table-column align="center" label="制造进度" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.customState.value }}</span>
+            </template>
+          </el-table-column>
 
-      <el-table-column align="center" label="操作" >
-        <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="resetPwd(scope.row)">
-            <svg-icon icon-class="password"/> 重置密码
-          </el-button>
-          <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button
-            v-if="scope.row.activated"
-            type="danger"
-            size="small"
-            @click="handleDisabled(scope.row)"
-          >
-            <svg-icon icon-class="disabled"/> 禁用
-          </el-button>
-          <el-button
-            v-else
-            type="primary"
-            size="small"
-            icon="el-icon-circle-check-outline"
-            @click="handleActived(scope.row)"
-          >激活
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+          <el-table-column align="center" label="添加日期" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="所属用户" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.user.login }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="鼠标垫">
+        <el-table v-loading="listLoading" :data="sjblist" border fit highlight-current-row style="width: 100%">
+          <el-table-column
+            align="center"
+            type="index"
+            width="50"
+          />
+
+          <el-table-column align="center" label="定制编号" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.customNumber }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="品牌" width="70" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.diePattern.computerType.value }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="笔记本型号">
+            <template slot-scope="scope">
+              <span>{{ scope.row.diePattern.diePatternType }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="数量" width="70">
+            <template slot-scope="scope">
+              <span>{{ scope.row.customQuantity }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="淘宝ID" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.taobaoNickname }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="收件人姓名" width="100" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.theRecipientName }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="鼠标垫" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.modelType.value }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="用户状态" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.finishedCondition.value }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="制造进度" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.customState.value }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="添加日期" width="100">
+            <template slot-scope="scope">
+              <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column align="center" label="所属用户" width="80">
+            <template slot-scope="scope">
+              <span>{{ scope.row.user.login }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
-    <!-- 新增编辑用户弹框 -->
-    <el-dialog v-if="showMask" :visible.sync="showMask" :title="maskTitle" width="350px">
-      <div class="dialog-form__wrapper">
-        <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
-          <el-form-item label="用户名称:" prop="firstName">
-            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="用户姓名"/>
-          </el-form-item>
-
-          <el-form-item label="代理名称:" prop="lastName">
-            <el-input v-model="ruleForm.lastName" class="width-192" placeholder="代理名称"/>
-          </el-form-item>
-
-          <el-form-item label="联系电话:" prop="lastName">
-            <el-input v-model="ruleForm.imageUrl" class="width-192" placeholder="联系电话"/>
-          </el-form-item>
-
-          <el-form-item label="登录账号:" prop="login">
-            <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号"/>
-          </el-form-item>
-
-          <el-form-item label="角色:" prop="login">
-            <el-select v-model="ruleForm.authorities" multiple class="width-192" placeholder="请选择">
-              <el-option
-                v-for="item in roleOptions"
-                :key="item"
-                :label="formatRole(item)"
-                :value="item"
-              />
-            </el-select>
-          </el-form-item>
-
-          <template v-if="maskTitle !== '编辑'">
-            <el-form-item label="登录密码:" prop="password">
-              <el-input v-model="ruleForm.password" class="width-192" placeholder="登录密码"/>
-            </el-form-item>
-          </template>
-
-          <el-form-item label="常用邮箱:" prop="email">
-            <el-input v-model="ruleForm.email" class="width-192" placeholder="your@email.com"/>
-            <div class="el-form-item__tip">Tips: 用来接收审核通知</div>
-          </el-form-item>
-
-          <el-form-item label="是否激活:">
-            <el-radio-group v-model="ruleForm.activated">
-              <el-radio :label="true">是</el-radio>
-              <el-radio :label="false">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
-        </el-form>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">新增</el-button>
-
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import * as Api from '@/api/agent'
+import * as Api from '@/api/custom-template'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'DatatList',
   components: { Pagination },
   data() {
-    var validateEmail = (rule, value, callback) => {
-      if (value) {
-        const reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/
-        if (!reg.test(value)) {
-          callback(new Error('请输入您正确邮箱'))
-        } else {
-          callback()
-        }
-      }
-    }
     return {
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      currentSearch: [],
       list: [],
+      bjblist: [],
+      sjblist: [],
+      allbjblist: [],
+      allsjblist: [],
       roleOptions: [],
       total: 0,
       listLoading: true,
@@ -181,42 +225,47 @@ export default {
         page: 1,
         pageSize: 10
       },
-      ruleForm: null,
-      rule: {
-        firstName: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        login: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: '必填项', trigger: 'blur' },
-          { validator: validateEmail, trigger: 'blur' }
-        ]
-      },
-      showMask: false,
-      maskTitle: '新增'
+      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 90)),
+      end: new Date()
     }
   },
   created() {
-    this.resetRuleForm()
+    this.currentSearch.push(this.begin)
+    this.currentSearch.push(this.end)
     this.getList()
     this.getRoleList()
   },
   methods: {
     getList() {
       this.listLoading = true
-      Api.getList({
+      this.getBjbList()
+      this.getSbdList()
+    },
+    getBjbList() {
+      Api.getListByFinishedConditionAndModeTypeIdByPage(2, 1, {
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize
       }).then(response => {
-        this.list = response.data
+        this.bjblist = response.data
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+    },
+    getSbdList() {
+      Api.getListByFinishedConditionAndModeTypeIdByPage(2, 2, {
+        page: this.listQuery.page - 1,
+        size: this.listQuery.pageSize
+      }).then(response => {
+        this.sjblist = response.data
+        this.total = Number(response.headers['x-total-count']) || 0
+        this.listLoading = false
+      })
+    },
+    search(query) {
+      // 初始化查询时间
+      this.begin = query[0]
+      this.end = query[1]
+      this.getList()
     },
     getRoleList() {
       Api.getRoleList().then(response => {
@@ -230,94 +279,6 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.page = val
       this.getList()
-    },
-    handleAdd() {
-      this.showMask = true
-      this.maskTitle = '新增'
-    },
-    handleEdit(row) {
-      this.showMask = true
-      this.maskTitle = '编辑'
-      this.ruleForm = Object.assign({}, row || {})
-    },
-    modify(row) {
-      Api.modify(row).then(response => {
-        if (response.status === 200) {
-          this.getList()
-        }
-      })
-    },
-    handleActived(row) {
-      const r = JSON.parse(JSON.stringify(row))
-      r.activated = true
-      this.modify(r)
-    },
-    handleDisabled(row) {
-      const r = JSON.parse(JSON.stringify(row))
-      r.activated = false
-      this.modify(r)
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          Api.register(this.ruleForm).then(response => {
-            if (response.status === 201) {
-              this.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              this.showMask = false
-              this.getList()
-            }
-          }).catch(err => {
-            console.error(err)
-          })
-        } else {
-          return false
-        }
-      })
-    },
-    resetPwd(row) {
-      this.$confirm('确定要重置密码吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        Api.resetpwd({
-          authorities: row.authorities,
-          id: row.id,
-          firstName: row.firstName,
-          login: row.login,
-          password: '123456',
-          activated: row.activated,
-          langKey: row.langKey,
-          email: row.email
-        }).then(response => {
-          if (response.status === 200) {
-            this.$message({
-              message: '重置密码成功！默认密码为：123456',
-              type: 'success'
-            })
-          } else {
-            this.$message.error('重置密码失败！')
-          }
-        })
-      }).catch(() => {
-        // Do nothing
-      })
-    },
-    resetRuleForm() {
-      this.ruleForm = {
-        firstName: '',
-        login: '',
-        password: '123456',
-        activated: false,
-        langKey: 'zh-cn',
-        email: ''
-      }
-    },
-    resetForm() {
-      this.showMask = false
     },
     formatRole(val) {
       return types.get(val)

@@ -2,7 +2,7 @@
 
 import Layout from '@/views/layout/Layout'
 
-const roles = ['ROLE_ADMIN']
+const roles = ['ROLE_ADMIN', 'ROLE_DISTRIBUTION']
 
 const dataRouter = {
   path: '/data',

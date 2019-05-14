@@ -1,7 +1,7 @@
 <template>
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
-      <el-form-item label="用户名称:">
+      <el-form-item>
         <el-date-picker
           v-model="currentSearch"
           :picker-options="pickerOptions"
@@ -139,7 +139,6 @@ export default {
       // 初始化查询时间
       this.begin = query[0]
       this.end = query[1]
-      console.log(query)
       this.getList()
     },
     getRoleList() {

@@ -50,7 +50,7 @@ const permission = {
       return new Promise(resolve => {
         const { roles } = data
         let accessedRouters
-        if (roles.includes('ROLE_ADMIN')) {
+        if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_DISTRIBUTION') || roles.includes('ROLE_DEVELOPMENT')) {
           accessedRouters = asyncRouterMap
         } else {
           accessedRouters = filterAsyncRouter(asyncRouterMap, roles)

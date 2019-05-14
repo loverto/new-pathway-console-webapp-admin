@@ -38,6 +38,17 @@ export function getListByFinishedCondition(finishedConditionId, query) {
 }
 
 /**
+ * 获取定制模板列表通过完成状态
+ */
+export function getListByFinishedConditionAndModeTypeIdByPage(finishedConditionId, modeTypeId, query) {
+  return request({
+    url: `/api/custom-templates/finished-condition/mode-type/pages/${finishedConditionId}/${modeTypeId}`,
+    method: 'get',
+    params: query
+  })
+}
+
+/**
  * 新增或更新定制模板
  */
 export function saveOrUpdate(data, method = 'post') {

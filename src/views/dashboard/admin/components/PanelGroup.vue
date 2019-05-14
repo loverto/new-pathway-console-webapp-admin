@@ -17,7 +17,7 @@
       <router-link to="/customs/index">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="item" ><i class="el-icon-s-cooperation"/> <svg-icon icon-class="el-icon-s-cooperation" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">待确认定单</div>
@@ -27,10 +27,36 @@
       </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <router-link to="/custom-template/make">
+        <div class="card-panel" @click="handleSetLineChartData('messages')">
+          <div class="card-panel-icon-wrapper icon-message">
+            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-unfold" class-name="card-panel-icon" /></el-badge>
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">待制造定单</div>
+            <count-to :start-val="0" :end-val="madeOrder" :duration="3000" class="card-panel-num"/>
+          </div>
+        </div>
+      </router-link>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <router-link to="/custom/sent">
+        <div class="card-panel" @click="handleSetLineChartData('messages')">
+          <div class="card-panel-icon-wrapper icon-message">
+            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-promotion" class-name="card-panel-icon" /></el-badge>
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">待发货定单</div>
+            <count-to :start-val="0" :end-val="sentOrder" :duration="3000" class="card-panel-num"/>
+          </div>
+        </div>
+      </router-link>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <router-link to="/custom/manager">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-order" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">定单数</div>
@@ -54,7 +80,9 @@ export default {
     return {
       agentNumber: 0,
       order: 0,
-      cust: 0
+      cust: 0,
+      madeOrder: 0,
+      sentOrder: 0
     }
   },
   created() {
@@ -73,6 +101,12 @@ export default {
     orderList() {
       Api.getListByCustomState(1, { page: 0, size: 1 }).then(response => {
         this.order = Number(response.headers['x-total-count']) || 0
+      })
+      Api.getListByCustomState(2, { page: 0, size: 1 }).then(response => {
+        this.madeOrder = Number(response.headers['x-total-count']) || 0
+      })
+      Api.getListByCustomState(3, { page: 0, size: 1 }).then(response => {
+        this.sentOrder = Number(response.headers['x-total-count']) || 0
       })
       Api.getList({ page: 0, size: 1 }).then(response => {
         this.cust = Number(response.headers['x-total-count']) || 0

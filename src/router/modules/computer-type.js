@@ -3,6 +3,7 @@
 import Layout from '@/views/layout/Layout'
 
 const roles = ['ROLE_ADMIN']
+const dev = ['ROLE_ADMIN', 'ROLE_DEVELOPMENT']
 
 const productRouter = {
   path: '/computer-types',
@@ -21,7 +22,7 @@ const productRouter = {
       meta: {
         title: '品牌管理',
         icon: 'list',
-        roles
+        dev
       }
     },
     {
@@ -32,7 +33,7 @@ const productRouter = {
       meta: {
         title: '品牌新增',
         icon: 'form',
-        roles
+        dev
       }
     },
     {
@@ -42,7 +43,7 @@ const productRouter = {
       meta: {
         title: '字体管理',
         icon: 'form',
-        roles
+        dev
       }
     },
     {
@@ -53,7 +54,7 @@ const productRouter = {
       meta: {
         title: '字体新增',
         icon: 'form',
-        roles
+        dev
       }
     },
     {
@@ -64,7 +65,7 @@ const productRouter = {
       meta: {
         title: '字体编辑',
         icon: 'form',
-        roles
+        dev
       }
     },
     {
@@ -75,7 +76,7 @@ const productRouter = {
       meta: {
         title: '电脑品牌',
         icon: 'edit',
-        roles
+        dev
       }
     },
     {

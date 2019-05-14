@@ -23,8 +23,12 @@ export default {
     ])
   },
   created() {
-    if (!this.roles.includes('ROLE_ADMIN')) {
-      this.currentRole = 'editorDashboard'
+    if (!this.roles.includes('ROLE_ADMIN') && !this.roles.includes('ROLE_DISTRIBUTION') && !this.roles.includes('ROLE_DEVELOPMENT')) {
+      this.$message('你没有权限，系统稍后退出')
+      this.$store.dispatch('LogOut').then(() => {
+        location.reload()// In order to re-instantiate the vue-router object to avoid bugs
+      })
+      // this.currentRole = 'editorDashboard'
     }
   }
 }
