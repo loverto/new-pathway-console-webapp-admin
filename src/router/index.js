@@ -4,16 +4,16 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-import Layout from '@/views/layout/Layout'
+import Layout from '@/layout'
 
 /* 业务路由 */
-import productRouter from './modules/computer-type'
-import diePatternRouter from './modules/die-pattern'
-import agentRouter from './modules/agent'
-import auditRouter from './modules/audit'
-import picRouter from './modules/pic'
-import custom from './modules/custom'
-import dataRouter from './modules/data'
+// import productRouter from './modules/computer-type'
+// import diePatternRouter from './modules/die-pattern'
+// import agentRouter from './modules/agent'
+// import auditRouter from './modules/audit'
+// import picRouter from './modules/pic'
+// import custom from './modules/custom'
+// import dataRouter from './modules/data'
 // import rateRouter from './modules/rate'
 
 /** note: Submenu only appear when children.length>=1
@@ -34,7 +34,7 @@ import dataRouter from './modules/data'
     noCache: true                if true ,the page will no be cached(default is false)
   }
 **/
-export const constantRouterMap = [
+export const constantRoutes = [
   {
     path: '/redirect',
     component: Layout,
@@ -81,19 +81,18 @@ export const constantRouterMap = [
   }
 ]
 
-export default new Router({
+const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+  routes: constantRoutes
 })
 
-export const asyncRouterMap = [
-  productRouter,
-  agentRouter,
-  // auditRouter,
-  diePatternRouter,
-  custom,
-  dataRouter,
-  // picRouter,
-  { path: '*', redirect: '/404', hidden: true }
-]
+const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router

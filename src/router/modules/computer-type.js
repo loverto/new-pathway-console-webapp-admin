@@ -1,6 +1,6 @@
 /** 产品 */
 
-import Layout from '@/views/layout/Layout'
+import Layout from '@/layout'
 
 const roles = ['ROLE_ADMIN']
 const dev = ['ROLE_ADMIN', 'ROLE_DEVELOPMENT']

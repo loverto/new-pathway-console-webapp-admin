@@ -1,6 +1,6 @@
 /** 利率管理 */
 
-import Layout from '@/views/layout/Layout'
+import Layout from '@/layout'
 
 const roles = ['ROLE_ADMIN']
 

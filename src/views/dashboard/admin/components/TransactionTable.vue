@@ -11,15 +11,17 @@
       </template>
     </el-table-column>
     <el-table-column label="Status" width="100" align="center">
-      <template slot-scope="scope">
-        <el-tag :type="scope.row.status | statusFilter"> {{ scope.row.status }}</el-tag>
+      <template slot-scope="{row}">
+        <el-tag :type="row.status | statusFilter">
+          {{ row.status }}
+        </el-tag>
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-import { fetchList } from '@/api/transaction'
+// import { transactionList } from '@/api/remote-search'
 
 export default {
   filters: {
@@ -44,9 +46,9 @@ export default {
   },
   methods: {
     fetchData() {
-      fetchList().then(response => {
-        this.list = response.data.items.slice(0, 8)
-      })
+      // transactionList().then(response => {
+      //   this.list = response.data.items.slice(0, 8)
+      // })
     }
   }
 }
