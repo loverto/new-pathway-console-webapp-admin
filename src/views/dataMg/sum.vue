@@ -3,15 +3,16 @@
     <el-form :inline="true" class="form-inline">
       <el-form-item label="用户名称:">
         <el-date-picker
-          v-model="value2"
+          v-model="currentSearch"
           :picker-options="pickerOptions"
+          :default-time="[begin, end]"
           type="daterange"
           align="right"
           unlink-panels
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"/>
-        <el-button type="success" icon="el-icon-search">查询</el-button>
+        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
         <el-select placeholder="选择用户">
           <el-option
           />
@@ -101,10 +102,12 @@ export default {
           }
         }]
       },
-      value2: '',
+      currentSearch: '',
       list: [],
       roleOptions: [],
       total: 0,
+      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 90)),
+      end: new Date(),
       listLoading: true,
       listQuery: {
         page: 1,
@@ -122,14 +125,21 @@ export default {
       Api.getWorkList({
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
-        begin: '',
-        end: '',
+        begin: this.begin,
+        end: this.end,
         login: ''
       }).then(response => {
         this.list = response.data
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+    },
+    search(query) {
+      // 初始化查询时间
+      this.begin = query[0]
+      this.end = query[1]
+      console.log(query)
+      this.getList()
     },
     getRoleList() {
       Api.getRoleList().then(response => {
