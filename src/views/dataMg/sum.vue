@@ -5,7 +5,6 @@
         <el-date-picker
           v-model="currentSearch"
           :picker-options="pickerOptions"
-          :default-time="[begin, end]"
           type="daterange"
           align="right"
           unlink-panels
@@ -102,7 +101,7 @@ export default {
           }
         }]
       },
-      currentSearch: '',
+      currentSearch: [],
       list: [],
       roleOptions: [],
       total: 0,
@@ -116,6 +115,8 @@ export default {
     }
   },
   created() {
+    this.currentSearch.push(this.begin)
+    this.currentSearch.push(this.end)
     this.getList()
     this.getRoleList()
   },
