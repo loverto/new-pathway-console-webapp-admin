@@ -30,7 +30,7 @@
               size="small"
               type="primary"
             >
-              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')"/>  点击上传
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
             </el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png格式的文件哦~</div>
           </el-upload>
@@ -50,10 +50,8 @@
 <script>
 import { saveOrUpdate } from '@/api/official-gallerie'
 import { getList } from '@/api/image-type'
-import ElSelectDropdown from 'element-ui/packages/select/src/select-dropdown'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 export default {
-  components: { ElSelectDropdown },
   data() {
     return {
       ruleForm: {
@@ -144,7 +142,7 @@ export default {
           const data = this.ruleForm
           // debugger
           // data.computerType = this.ruleForm.ct
-          saveOrUpdate(data,method).then(response => {
+          saveOrUpdate(data, method).then(response => {
             if (response.status === 201 || response.status === 200) {
               this.$message({
                 message: '添加官方图库成功！',

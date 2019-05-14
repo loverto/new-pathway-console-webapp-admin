@@ -21,7 +21,6 @@ router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   // set page title
   document.title = getPageTitle(to.meta.title)
-  debugger
   if (getToken()) { // determine if there has token
     /* has token*/
     if (to.path === '/login') {
@@ -30,10 +29,15 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('user/GetUserInfo').then(res => { // 拉取user_info
-          debugger
           const roles = res.data.authorities // note: roles must be a array! such as: ['editor','develop']
-          store.dispatch('permission/generateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
-            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+          store.dispatch('permission/generateRoutes', { roles }).then(res => { // 根据roles权限生成可访问的路由表
+            const routes = store.getters.addRoutes
+            // const routes = store.getters.addRouters
+            // console.log(routes())
+
+            // const routes = res
+            console.log(routes)
+            router.addRoutes(routes) // 动态添加可访问路由表
             next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
           })
         }).catch((err) => {

@@ -3,11 +3,11 @@
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="品牌:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="品牌代码值" class="width-50p"/>
+          <el-input v-model="ruleForm.name" placeholder="品牌代码值" class="width-50p" />
         </el-form-item>
 
         <el-form-item label="品牌:" prop="value">
-          <el-input v-model="ruleForm.value" placeholder="品牌显示值..." class="width-50p"/>
+          <el-input v-model="ruleForm.value" placeholder="品牌显示值..." class="width-50p" />
         </el-form-item>
 
         <el-form-item>
@@ -76,7 +76,7 @@ export default {
               })
 
               // 产品列表组件
-              let productIndexComp = this.$parent.$parent
+              const productIndexComp = this.$parent.$parent
               if (this.buttonText === '编辑' || productIndexComp.$options.name === 'ProductList') {
                 // 通知父组件中的监听回调方法
                 productIndexComp.$emit('saveNotify', true)

@@ -28,7 +28,7 @@
       <el-table-column align="center" label="其他">
         <template slot-scope="scope">
           <span v-if="scope.row.data && scope.row.data.message">{{ scope.row.data.message }}</span>
-          <span v-if="scope.row.data && scope.row.data.remoteAddress"><span >远程地址</span> {{ scope.row.data.remoteAddress }}</span>
+          <span v-if="scope.row.data && scope.row.data.remoteAddress"><span>远程地址</span> {{ scope.row.data.remoteAddress }}</span>
         </template>
       </el-table-column>
 
@@ -41,21 +41,21 @@
       <div class="dialog-form__wrapper">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
           <el-form-item label="代理商名称:" prop="firstName">
-            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="代理商名字"/>
+            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="代理商名字" />
           </el-form-item>
 
           <el-form-item label="登录账号:" prop="login">
-            <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号"/>
+            <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号" />
           </el-form-item>
 
           <template v-if="maskTitle !== '编辑'">
             <el-form-item label="登录密码:" prop="password">
-              <el-input v-model="ruleForm.password" class="width-192" placeholder="登录密码"/>
+              <el-input v-model="ruleForm.password" class="width-192" placeholder="登录密码" />
             </el-form-item>
           </template>
 
           <el-form-item label="常用邮箱:" prop="email">
-            <el-input v-model="ruleForm.email" class="width-192" placeholder="your@email.com"/>
+            <el-input v-model="ruleForm.email" class="width-192" placeholder="your@email.com" />
             <div class="el-form-item__tip">Tips: 用来接收审核通知</div>
           </el-form-item>
 

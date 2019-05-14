@@ -63,13 +63,15 @@
           <el-col :span="6">
             <p><strong>身份证正面照: </strong></p>
             <viewer
-              :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.idCardFrontPhotoUrl"/>
+              :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.idCardFrontPhotoUrl"
+            />
           </el-col>
           <el-col :span="6">
             <p><strong>身份证反面照: </strong></p>
             <viewer
               :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.idCardBackPhotoUrl"
-              style="width: 50px;"/>
+              style="width: 50px;"
+            />
           </el-col>
         </el-row>
       </div>
@@ -173,7 +175,8 @@
             <p><strong>工作证明照片: </strong></p>
             <template v-if="data.personalInformation.workNamePhotoUrl">
               <viewer
-                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.workNamePhotoUrl "/>
+                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.workNamePhotoUrl "
+              />
             </template>
             <template v-else>
               <span>(无)</span>
@@ -184,7 +187,8 @@
             <p><strong>营业执照: </strong></p>
             <template v-if="data.personalInformation.businessLicensePhotoUrl">
               <viewer
-                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.businessLicensePhotoUrl"/>
+                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.businessLicensePhotoUrl"
+              />
             </template>
             <template v-else>
               <span>(无)</span>
@@ -195,7 +199,8 @@
             <p><strong>房产证明或房本: </strong></p>
             <template v-if="data.personalInformation.proofOfRealEstateUrl">
               <viewer
-                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.proofOfRealEstateUrl"/>
+                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.proofOfRealEstateUrl"
+              />
             </template>
             <template v-else>
               <span>(无)</span>
@@ -205,7 +210,8 @@
             <p><strong>购房网签合同: </strong></p>
             <template v-if="data.personalInformation.purchaseAHouseNetworkContractUrl">
               <viewer
-                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.purchaseAHouseNetworkContractUrl"/>
+                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.purchaseAHouseNetworkContractUrl"
+              />
             </template>
             <template v-else>
               <span>(无)</span>
@@ -215,7 +221,8 @@
             <p><strong>其他材料: </strong></p>
             <template v-if="data.personalInformation.otherPhotoUrl">
               <viewer
-                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.otherPhotoUrl"/>
+                :img-src="'http://th.minio.boyuanziben.cn' + data.personalInformation.otherPhotoUrl"
+              />
             </template>
             <template v-else>
               <span>(无)</span>

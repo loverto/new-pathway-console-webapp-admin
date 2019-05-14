@@ -49,7 +49,6 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, data) {
     return new Promise(resolve => {
-      debugger
       const { roles } = data
       let accessedRoutes
       if (roles.includes('ROLE_ADMIN') || roles.includes('ROLE_DISTRIBUTION') || roles.includes('ROLE_DEVELOPMENT')) {

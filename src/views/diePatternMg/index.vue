@@ -18,7 +18,7 @@
         type="index"
         width="50"
       />
-      <el-table-column align="center" label="笔记本品牌" >
+      <el-table-column align="center" label="笔记本品牌">
         <template slot-scope="scope">
           <span>{{ scope.row.computerType.value }}</span>
         </template>
@@ -39,14 +39,14 @@
       <el-table-column align="center" label="刀模图">
         <template slot-scope="scope">
           <template v-if="scope.row.diePatternimagePath">
-            <viewer :img-src="baseImgUrl + scope.row.diePatternimagePath" :zoom="1"/>
-<!--            <img :src="'http://th.minio.boyuanziben.cn' + scope.row.diePatternimagePath" :alt="scope.row.diePatternType" width="50px;">-->
+            <viewer :img-src="baseImgUrl + scope.row.diePatternimagePath" :zoom="1" />
+            <!--            <img :src="'http://th.minio.boyuanziben.cn' + scope.row.diePatternimagePath" :alt="scope.row.diePatternType" width="50px;">-->
           </template>
           <template v-else>-</template>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" >
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="danger" class="del-btn" size="small" icon="el-icon-error" @click="handleDelete(scope.row)">删除</el-button>
         </template>

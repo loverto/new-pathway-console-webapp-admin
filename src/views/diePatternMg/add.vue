@@ -14,7 +14,7 @@
         </el-form-item>
 
         <el-form-item label="笔记本型号:" prop="diePatternimageType">
-          <el-input v-model="ruleForm.diePatternType" placeholder="笔记本型号(默认读取上传文件名称)..." class="width-50p"/>
+          <el-input v-model="ruleForm.diePatternType" placeholder="笔记本型号(默认读取上传文件名称)..." class="width-50p" />
         </el-form-item>
 
         <el-form-item label="图片:">
@@ -34,7 +34,7 @@
               size="small"
               type="primary"
             >
-              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')"/>  点击上传
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
             </el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png格式的文件哦~</div>
           </el-upload>
@@ -54,10 +54,8 @@
 <script>
 import { add } from '@/api/die-pattern'
 import { getList } from '@/api/computer-type'
-import ElSelectDropdown from 'element-ui/packages/select/src/select-dropdown'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 export default {
-  components: { ElSelectDropdown },
   data() {
     return {
       ruleForm: {

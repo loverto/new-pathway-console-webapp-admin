@@ -36,7 +36,7 @@ const bannerRouter = {
       }
     },
     {
-      path: '/die-pattern/add',
+      path: '/die-pattern/edit',
       hidden: true,
       component: () => import('@/views/diePatternMg/edit'),
       name: 'dieEdit',

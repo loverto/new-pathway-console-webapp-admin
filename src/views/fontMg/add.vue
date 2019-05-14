@@ -3,11 +3,11 @@
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="字体名称:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="字体名称代码值" class="width-50p"/>
+          <el-input v-model="ruleForm.name" placeholder="字体名称代码值" class="width-50p" />
         </el-form-item>
 
         <el-form-item label="字体名称:" prop="value">
-          <el-input v-model="ruleForm.value" placeholder="字体名称显示值..." class="width-50p"/>
+          <el-input v-model="ruleForm.value" placeholder="字体名称显示值..." class="width-50p" />
         </el-form-item>
 
         <el-form-item>
@@ -62,7 +62,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-
           // 检查当前是新增还是保存
           let method = 'post'
           if (this.ruleForm.id || this.buttonText === '编辑') {
@@ -78,7 +77,7 @@ export default {
               })
 
               // 产品列表组件
-              let productIndexComp = this.$parent.$parent
+              const productIndexComp = this.$parent.$parent
               if (this.buttonText === '编辑' || productIndexComp.$options.name === 'ProductList') {
                 // 通知父组件中的监听回调方法
                 productIndexComp.$emit('saveNotify', true)

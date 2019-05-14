@@ -2,7 +2,7 @@
   <div class="img-lazyload">
     <template v-if="loadStatus === 'loading'">
       <div class="loading">
-        <svg-icon icon-class="loading" class="loading"/>
+        <svg-icon icon-class="loading" class="loading" />
       </div>
     </template>
     <template v-else-if="loadStatus === 'loaded'">
@@ -12,7 +12,7 @@
     </template>
     <template v-else-if="loadStatus === 'error'">
       <div class="error">
-        <svg-icon icon-class="img-load-error" class="load-error"/>
+        <svg-icon icon-class="img-load-error" class="load-error" />
       </div>
     </template>
   </div>

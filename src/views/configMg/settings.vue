@@ -25,6 +25,7 @@ import * as Api from '@/api/config'
 import ElSelectDropdown from 'element-ui/packages/select/src/select-dropdown'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 export default {
+  // eslint-disable-next-line vue/no-unused-components
   components: { ElSelectDropdown },
   data() {
     return {

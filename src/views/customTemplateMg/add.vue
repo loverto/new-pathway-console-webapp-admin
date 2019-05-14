@@ -3,11 +3,11 @@
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="图片名称:" prop="title">
-          <el-input v-model="ruleForm.title" placeholder="图片名称" class="width-50p"/>
+          <el-input v-model="ruleForm.title" placeholder="图片名称" class="width-50p" />
         </el-form-item>
 
         <el-form-item label="描述:" prop="description">
-          <el-input v-model="ruleForm.description" placeholder="简单介绍下这个图片..." class="width-50p"/>
+          <el-input v-model="ruleForm.description" placeholder="简单介绍下这个图片..." class="width-50p" />
         </el-form-item>
 
         <el-form-item label="图片:">
@@ -16,7 +16,8 @@
           <el-popover
             v-if="ruleForm.url"
             placement="right"
-            trigger="click">
+            trigger="click"
+          >
             <img :src="'data:' + ruleForm.urlContentType + ';base64,' + ruleForm.url" style="max-width: 50px;">
             <el-button slot="reference" type="text">预览</el-button>
           </el-popover>

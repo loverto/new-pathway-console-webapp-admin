@@ -2,7 +2,7 @@
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
       <el-form-item label="用户:">
-        <el-input v-model="currentSearch" placeholder="查找 用户" clearable="clear()" />
+        <el-input v-model="currentSearch" placeholder="查找 用户" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
@@ -62,14 +62,15 @@
 
       <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span v-if="scope.row.createdDate&&scope.row.createdDate.length>0">{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+          <span v-else>-</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" >
+      <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="resetPwd(scope.row)">
-            <svg-icon icon-class="password"/> 重置密码
+            <svg-icon icon-class="password" /> 重置密码
           </el-button>
           <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button
@@ -78,7 +79,7 @@
             size="small"
             @click="handleDisabled(scope.row)"
           >
-            <svg-icon icon-class="disabled"/> 禁用
+            <svg-icon icon-class="disabled" /> 禁用
           </el-button>
           <el-button
             v-else
@@ -99,19 +100,19 @@
       <div class="dialog-form__wrapper">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
           <el-form-item label="用户名称:" prop="firstName">
-            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="用户姓名"/>
+            <el-input v-model="ruleForm.firstName" class="width-192" placeholder="用户姓名" />
           </el-form-item>
 
           <el-form-item label="代理名称:" prop="lastName">
-            <el-input v-model="ruleForm.lastName" class="width-192" placeholder="代理名称"/>
+            <el-input v-model="ruleForm.lastName" class="width-192" placeholder="代理名称" />
           </el-form-item>
 
           <el-form-item label="联系电话:" prop="lastName">
-            <el-input v-model="ruleForm.imageUrl" class="width-192" placeholder="联系电话"/>
+            <el-input v-model="ruleForm.imageUrl" class="width-192" placeholder="联系电话" />
           </el-form-item>
 
           <el-form-item label="登录账号:" prop="login">
-            <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号"/>
+            <el-input v-model="ruleForm.login" class="width-192" placeholder="登录账号" />
           </el-form-item>
 
           <el-form-item label="角色:" prop="login">
@@ -127,12 +128,12 @@
 
           <template v-if="maskTitle !== '编辑'">
             <el-form-item label="登录密码:" prop="password">
-              <el-input v-model="ruleForm.password" class="width-192" placeholder="登录密码"/>
+              <el-input v-model="ruleForm.password" class="width-192" placeholder="登录密码" />
             </el-form-item>
           </template>
 
           <el-form-item label="常用邮箱:" prop="email">
-            <el-input v-model="ruleForm.email" class="width-192" placeholder="your@email.com"/>
+            <el-input v-model="ruleForm.email" class="width-192" placeholder="your@email.com" />
             <div class="el-form-item__tip">Tips: 用来接收审核通知</div>
           </el-form-item>
 

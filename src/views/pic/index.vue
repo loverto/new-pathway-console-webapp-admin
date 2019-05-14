@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <div v-for="x in listp" :key="x.index" class="mce-i-tablecellprops" >
+    <div v-for="x in listp" :key="x.index" class="mce-i-tablecellprops">
       <img :src="'http://th.minio.boyuanziben.cn/boyuanziben/' + x.name + '_500x500'"> <span>/boyuanziben/{{ x.name }}</span>  <span>{{ x.lastModified | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
     </div>
   </div>

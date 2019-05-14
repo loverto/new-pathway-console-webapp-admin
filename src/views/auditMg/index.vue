@@ -2,7 +2,7 @@
   <div class="app-container audit-wrapper">
     <el-form :inline="true" class="form-inline">
       <el-form-item label="代理商:" clearable>
-        <el-input v-model="listQuery.user" placeholder="代理商名称" clearable/>
+        <el-input v-model="listQuery.user" placeholder="代理商名称" clearable />
       </el-form-item>
 
       <el-form-item label="审核状态:" clearable>
@@ -135,7 +135,8 @@
             type="primary"
             size="small"
             icon="el-icon-view"
-            @click="showDetail(scope.row)">
+            @click="showDetail(scope.row)"
+          >
             查看
           </el-button>
 
@@ -146,7 +147,7 @@
                 {{ !scope.row.personalInformation.city ? '初审' : '终审' }}
                 <i class="el-icon-arrow-down el-icon--right"/>
               </el-button> -->
-              <el-button type="primary" size="small">{{ auditBtnText }} <i class="el-icon-arrow-down el-icon--right"/></el-button>
+              <el-button type="primary" size="small">{{ auditBtnText }} <i class="el-icon-arrow-down el-icon--right" /></el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="[true, scope.row]">通过</el-dropdown-item>
                 <el-dropdown-item :command="[false, scope.row]">不通过</el-dropdown-item>
@@ -168,7 +169,7 @@
 
     <!-- 查看详情弹框 -->
     <el-dialog :visible.sync="showMask" title="申请人信息" top="5vh">
-      <apply-detail-info :data="baseInfo"/>
+      <apply-detail-info :data="baseInfo" />
     </el-dialog>
 
     <!-- 审核失败原因弹框 -->
@@ -182,7 +183,7 @@
     >
       <el-form ref="reasonForm" :model="reasonForm" :rules="reasonFormRule">
         <el-form-item label="" prop="auditReason">
-          <el-input v-model="reasonForm.auditReason" :rows="4" type="textarea" placeholder="请输入审核不通过原因..."/>
+          <el-input v-model="reasonForm.auditReason" :rows="4" type="textarea" placeholder="请输入审核不通过原因..." />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -202,27 +203,27 @@
     >
       <el-form ref="finalForm" :model="finalForm" :rules="finalFormRule" label-width="92px">
         <el-form-item label="产品名称:">
-          <el-input :value="rowData.product.title" style="width: 199px;" disabled/>
+          <el-input :value="rowData.product.title" style="width: 199px;" disabled />
         </el-form-item>
         <el-form-item label="额度范围:">
           <el-input :value="rowData.product.loanRangeStart + '-' + rowData.product.loanRangeEnd" style="width: 199px;" disabled>
-            <svg-icon slot="suffix" icon-class="rmb"/>
+            <svg-icon slot="suffix" icon-class="rmb" />
           </el-input>
         </el-form-item>
         <el-form-item label="申请额度:">
           <el-input :value="rowData.amount" style="width: 199px;" disabled>
-            <svg-icon slot="suffix" icon-class="rmb"/>
+            <svg-icon slot="suffix" icon-class="rmb" />
           </el-input>
         </el-form-item>
         <el-form-item label="申请期限:">
-          <el-input :value="rowData.deadline + '个月'" style="width: 199px;" disabled/>
+          <el-input :value="rowData.deadline + '个月'" style="width: 199px;" disabled />
         </el-form-item>
         <el-form-item label="终审额度:">
           <el-input v-model="finalForm.amount" placeholder="请输入终审额度" style="width: 199px;">
-            <svg-icon slot="suffix" icon-class="rmb"/>
+            <svg-icon slot="suffix" icon-class="rmb" />
           </el-input>
         </el-form-item>
-        <el-form-item label="终审期限:" >
+        <el-form-item label="终审期限:">
           <el-select v-model="finalForm.deadline" placeholder="请选择">
             <el-option
               v-for="(item, $index) of deadlines"
@@ -260,6 +261,7 @@ const CONST = {
 
 export default {
   name: 'AuditList',
+  // eslint-disable-next-line vue/no-unused-components
   components: { Viewer, ApplyDetailInfo, Pagination },
   directives: {
     shouldHide: {

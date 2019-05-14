@@ -5,6 +5,7 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
 import ViewerStyle from 'viewerjs/dist/viewer.min.css'
 import Viewer from 'viewerjs'
 

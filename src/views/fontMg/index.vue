@@ -54,7 +54,7 @@
       class="product-edit__dialog"
       @close="handleClose"
     >
-      <add-page :form-data="curProd" button-text="编辑"/>
+      <add-page :form-data="curProd" button-text="编辑" />
     </el-dialog>
 
   </div>

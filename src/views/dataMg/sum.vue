@@ -10,11 +10,11 @@
           unlink-panels
           range-separator="至"
           start-placeholder="开始日期"
-          end-placeholder="结束日期"/>
+          end-placeholder="结束日期"
+        />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
         <el-select placeholder="选择用户">
-          <el-option
-          />
+          <el-option />
         </el-select>
         <el-button type="success" icon="el-icon-download">导出明细</el-button>
       </el-form-item>
@@ -27,7 +27,7 @@
         width="50"
       />
 
-      <el-table-column align="center" label="账号" >
+      <el-table-column align="center" label="账号">
         <template slot-scope="scope">
           <span>{{ scope.row.login }}</span>
         </template>
@@ -39,19 +39,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="代理名称" >
+      <el-table-column align="center" label="代理名称">
         <template slot-scope="scope">
           <span>{{ scope.row.lastName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="贴膜使用次数" >
+      <el-table-column align="center" label="贴膜使用次数">
         <template slot-scope="scope">
           <span>{{ scope.row.tmCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="鼠标垫使用次数" >
+      <el-table-column align="center" label="鼠标垫使用次数">
         <template slot-scope="scope">
           <span>{{ scope.row.sbdCount }}</span>
         </template>
@@ -68,10 +68,9 @@
 import * as Api from '@/api/agent'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
-import ElSlPanel from 'element-ui/packages/color-picker/src/components/sv-panel'
 export default {
   name: 'SumList',
-  components: { ElSlPanel, Pagination },
+  components: { Pagination },
   data() {
     return {
       pickerOptions: {

@@ -8,7 +8,7 @@
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">用户人数</div>
-            <count-to :start-val="0" :end-val="agentNumber" :duration="2600" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="agentNumber" :duration="2600" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -17,11 +17,11 @@
       <router-link to="/customs/index">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item" ><i class="el-icon-s-cooperation"/> <svg-icon icon-class="el-icon-s-cooperation" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="el-icon-s-cooperation"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">待确认定单</div>
-            <count-to :start-val="0" :end-val="order" :duration="3000" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="order" :duration="3000" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -30,11 +30,11 @@
       <router-link to="/custom-template/make">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-unfold" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">待制造定单</div>
-            <count-to :start-val="0" :end-val="madeOrder" :duration="3000" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="madeOrder" :duration="3000" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -43,11 +43,11 @@
       <router-link to="/custom/sent">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-promotion" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">待发货定单</div>
-            <count-to :start-val="0" :end-val="sentOrder" :duration="3000" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="sentOrder" :duration="3000" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -56,11 +56,11 @@
       <router-link to="/custom/manager">
         <div class="card-panel" @click="handleSetLineChartData('messages')">
           <div class="card-panel-icon-wrapper icon-message">
-            <el-badge is-dot class="item"><svg-icon icon-class="el-icon-s-order" class-name="card-panel-icon" /></el-badge>
+            <el-badge is-dot class="item"><svg-icon icon-class="message" class-name="card-panel-icon" /></el-badge>
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">定单数</div>
-            <count-to :start-val="0" :end-val="cust" :duration="3000" class="card-panel-num"/>
+            <count-to :start-val="0" :end-val="cust" :duration="3000" class="card-panel-num" />
           </div>
         </div>
       </router-link>
