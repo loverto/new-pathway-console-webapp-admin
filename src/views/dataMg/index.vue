@@ -222,10 +222,12 @@ export default {
           text = '所有用户'
         }
         this.filename = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}') + text + '作品明细表'
+
         const data = this.formatJson(filterVal, list)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
+        excel.export_json_to_excel_sheet({
+          headers: [tHeader, tHeader],
+          datas: [data, data],
+          sheetnames: ['笔记本', '鼠标垫'],
           filename: this.filename,
           autoWidth: this.autoWidth,
           bookType: this.bookType
