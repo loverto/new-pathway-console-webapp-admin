@@ -11,7 +11,8 @@ const bannerRouter = {
   name: 'Banners',
   meta: {
     title: '文件管理',
-    icon: 'clipboard'
+    icon: 'clipboard',
+    roles
   },
   children: [
     {

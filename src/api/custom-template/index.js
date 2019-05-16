@@ -69,3 +69,14 @@ export function deleteById(id) {
   })
 }
 
+/**
+ * 获取定制模板列表
+ */
+export function getSearchList(query) {
+  return request({
+    url: '/api/_search/custom-templates',
+    method: 'get',
+    params: query
+  })
+}
+

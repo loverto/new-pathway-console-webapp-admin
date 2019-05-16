@@ -10,7 +10,8 @@ const agentRouter = {
   redirect: '/agents/index',
   meta: {
     title: '关于用户',
-    icon: 'user'
+    icon: 'user',
+    roles
   },
   children: [
     {

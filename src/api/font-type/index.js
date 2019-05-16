@@ -26,3 +26,14 @@ export function saveOrUpdate(data, method = 'post') {
     data
   })
 }
+
+/**
+ * 获取字体列表
+ */
+export function getSearchList(query) {
+  return request({
+    url: '/api/_search/font-types',
+    method: 'get',
+    params: query
+  })
+}

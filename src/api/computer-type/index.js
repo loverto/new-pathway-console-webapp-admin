@@ -30,9 +30,9 @@ export function saveOrUpdate(data, method = 'post') {
 /**
  * 获取审核列表
  */
-export function getAudits(query) {
+export function getSearchList(query) {
   return request({
-    url: '/api/v3/application-infos',
+    url: '/api/_search/computer-types',
     method: 'get',
     params: query
   })

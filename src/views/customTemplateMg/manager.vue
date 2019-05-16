@@ -1,5 +1,7 @@
 <template>
   <div class="app-container banner-wrapper">
+    <el-input v-model="currentSearch" placeholder="查找 定单" clearable class="width-50p" />
+    <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"
@@ -134,6 +136,7 @@ export default {
       finishedStateOptions: [],
       total: 0,
       listLoading: true,
+      currentSearch: '',
       listQuery: {
         page: 1,
         pageSize: 10
@@ -144,7 +147,7 @@ export default {
   created() {
     this.getFinishedStateList()
     this.getStateList()
-    this.getList()
+    this.loadAll()
   },
   methods: {
     getList() {
@@ -157,6 +160,35 @@ export default {
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+    },
+    clear() {
+      this.page = 0
+      this.currentSearch = ''
+      this.loadAll()
+    },
+    loadAll() {
+      if (this.currentSearch) {
+        this.listLoading = true
+        Api.getSearchList({
+          query: this.currentSearch,
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }).then(response => {
+          this.list = response.data
+          this.total = Number(response.headers['x-total-count']) || 0
+          this.listLoading = false
+        })
+        return
+      }
+      this.getList()
+    },
+    search(query) {
+      if (!query) {
+        return this.clear()
+      }
+      this.page = 0
+      this.currentSearch = query
+      this.loadAll()
     },
     getStateList() {
       this.listLoading = true

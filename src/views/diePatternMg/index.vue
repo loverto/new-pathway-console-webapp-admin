@@ -1,5 +1,7 @@
 <template>
   <div class="app-container banner-wrapper">
+    <el-input v-model="currentSearch" placeholder="查找 刀模图" clearable class="width-50p" />
+    <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
     <router-link to="/die-pattern/add">
       <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加刀模图</el-button>
     </router-link>
@@ -70,6 +72,7 @@ export default {
       list: [],
       total: 0,
       listLoading: true,
+      currentSearch: '',
       listQuery: {
         page: 1,
         pageSize: 10
@@ -83,7 +86,7 @@ export default {
     })
   },
   created() {
-    this.getList()
+    this.loadAll()
   },
   methods: {
     getList() {
@@ -96,6 +99,35 @@ export default {
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+    },
+    clear() {
+      this.page = 0
+      this.currentSearch = ''
+      this.loadAll()
+    },
+    loadAll() {
+      if (this.currentSearch) {
+        this.listLoading = true
+        Api.getSearchList({
+          query: this.currentSearch,
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }).then(response => {
+          this.list = response.data
+          this.total = Number(response.headers['x-total-count']) || 0
+          this.listLoading = false
+        })
+        return
+      }
+      this.getList()
+    },
+    search(query) {
+      if (!query) {
+        return this.clear()
+      }
+      this.page = 0
+      this.currentSearch = query
+      this.loadAll()
     },
     handleSizeChange(val) {
       this.listQuery.limit = val

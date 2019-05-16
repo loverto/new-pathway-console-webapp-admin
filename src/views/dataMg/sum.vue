@@ -111,7 +111,7 @@ export default {
       exportlist: [],
       usersOptions: [],
       total: 0,
-      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 90)),
+      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 30)),
       end: new Date(),
       listLoading: true,
       downloadLoading: false,
@@ -147,7 +147,7 @@ export default {
           const list = this.exportlist
           let text = ''
           if (this.currentUser) {
-            text = this.currentSearch
+            text = this.currentUser
           } else {
             text = '所有用户'
           }
@@ -178,7 +178,7 @@ export default {
         size: this.listQuery.pageSize,
         begin: this.begin,
         end: this.end,
-        login: ''
+        login: this.currentUser
       }).then(response => {
         this.list = response.data
         this.total = Number(response.headers['x-total-count']) || 0

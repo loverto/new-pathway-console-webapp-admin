@@ -1,5 +1,6 @@
 <template>
   <div class="app-container banner-wrapper">
+
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"

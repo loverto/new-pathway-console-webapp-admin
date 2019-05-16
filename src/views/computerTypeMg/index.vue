@@ -1,5 +1,7 @@
 <template>
   <div class="app-container product-wrapper">
+    <el-input v-model="currentSearch" placeholder="查找 品牌" clearable class="width-50p" />
+    <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
     <router-link to="/computer-type/add">
       <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加品牌</el-button>
     </router-link>
@@ -18,12 +20,6 @@
         type="index"
         width="50"
       />
-
-      <el-table-column align="center" label="品牌值">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
-        </template>
-      </el-table-column>
 
       <el-table-column align="center" label="品牌">
         <template slot-scope="scope">
@@ -71,6 +67,7 @@ export default {
   data() {
     return {
       list: [],
+      currentSearch: '',
       total: 0,
       listLoading: true,
       listQuery: {
@@ -82,13 +79,13 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.loadAll()
 
     // 监听一个保存成功的回调
     // 用于修改产品后触发列表刷新
     this.$on('saveNotify', (flag) => {
       this.showMask = false
-      if (flag) this.getList()
+      if (flag) this.loadAll()
     })
   },
   methods: {
@@ -104,6 +101,35 @@ export default {
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+    },
+    clear() {
+      this.page = 0
+      this.currentSearch = ''
+      this.loadAll()
+    },
+    loadAll() {
+      if (this.currentSearch) {
+        this.listLoading = true
+        Api.getSearchList({
+          query: this.currentSearch,
+          page: this.listQuery.page - 1,
+          size: this.listQuery.pageSize
+        }).then(response => {
+          this.list = response.data
+          this.total = Number(response.headers['x-total-count']) || 0
+          this.listLoading = false
+        })
+        return
+      }
+      this.getList()
+    },
+    search(query) {
+      if (!query) {
+        return this.clear()
+      }
+      this.page = 0
+      this.currentSearch = query
+      this.loadAll()
     },
     handleSizeChange(val) {
       this.listQuery.limit = val

@@ -11,7 +11,8 @@ const dataRouter = {
   name: 'Banners',
   meta: {
     title: '数据统计',
-    icon: 'clipboard'
+    icon: 'clipboard',
+    roles
   },
   children: [
     {

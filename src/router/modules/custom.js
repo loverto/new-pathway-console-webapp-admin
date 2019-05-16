@@ -11,7 +11,8 @@ const customRouter = {
   name: 'Customs',
   meta: {
     title: '定单流程',
-    icon: 'example'
+    icon: 'example',
+    roles
   },
   children: [
     {

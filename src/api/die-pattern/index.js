@@ -45,3 +45,15 @@ export function deleteById(id) {
     method: 'delete'
   })
 }
+
+/**
+ * 获取刀模图列表
+ */
+export function getSearchList(query) {
+  return request({
+    url: '/api/_search/die-patterns',
+    method: 'get',
+    params: query
+  })
+}
+

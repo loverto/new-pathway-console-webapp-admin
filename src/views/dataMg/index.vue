@@ -13,8 +13,13 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select placeholder="选择用户">
-          <el-option />
+        <el-select v-model="currentUser" placeholder="选择用户">
+          <el-option
+            v-for="item in usersOptions"
+            :key="item.login"
+            :label="item.login"
+            :value="item.login"
+          />
         </el-select>
         <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
       </el-form-item>
@@ -186,14 +191,14 @@ export default {
       sjblist: [],
       allbjblist: [],
       allsjblist: [],
-      roleOptions: [],
+      usersOptions: [],
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         pageSize: 10
       },
-      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 90)),
+      begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 30)),
       downloadLoading: false,
       currentUser: '',
       filename: '',
@@ -206,7 +211,7 @@ export default {
     this.currentSearch.push(this.begin)
     this.currentSearch.push(this.end)
     this.getList()
-    this.getRoleList()
+    this.getUsersOptionList()
   },
   methods: {
     handleDownload() {
@@ -217,7 +222,7 @@ export default {
         const list = this.bjblist
         let text = ''
         if (this.currentUser) {
-          text = this.currentSearch
+          text = this.currentUser
         } else {
           text = '所有用户'
         }
@@ -268,9 +273,9 @@ export default {
       this.end = query[1]
       this.getList()
     },
-    getRoleList() {
-      Api.getRoleList().then(response => {
-        this.roleOptions = response.data
+    getUsersOptionList() {
+      Api.getList({ page: 0, size: 1000000 }).then(response => {
+        this.usersOptions = response.data
       })
     },
     handleSizeChange(val) {
