@@ -2,8 +2,27 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="字体名称:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="字体名称代码值" class="width-50p" />
+        <el-form-item label="字体文件:" prop="name">
+          <el-upload
+            :multiple="false"
+            :show-file-list="showFileList"
+            :limit="1"
+            :http-request="uploadSectionFile"
+            :on-remove="removeImage"
+            :before-upload="beforeUpload"
+            list-type="text"
+            action="string"
+            accept=".ttf,.woff"
+          >
+            <el-button
+              :disabled="ruleForm.name ? true : false"
+              size="small"
+              type="primary"
+            >
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
+            </el-button>
+            <div slot="tip" class="el-upload__tip">只能上传ttf/woff格式的文件哦~</div>
+          </el-upload>
         </el-form-item>
 
         <el-form-item label="字体名称:" prop="value">
@@ -23,6 +42,7 @@
 <script>
 import { saveOrUpdate } from '@/api/font-type'
 import { deepClone } from '@/utils'
+import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 
 export default {
   name: 'AddOrEditProductPage',
@@ -59,6 +79,47 @@ export default {
     if (this.formData) this.ruleForm = deepClone(this.formData)
   },
   methods: {
+    beforeUpload(file) {
+      if (!file) return false
+
+      const ext = /\.[^\.]+$/.exec(file.name)[0]
+      debugger
+      if (!/\.(ttf|woff)/.test(ext)) {
+        this.showFileList = false
+        this.$message({
+          message: '只能上传ttf/woff格式的文件哦~',
+          type: 'warning'
+        })
+        return false
+      }
+    },
+    /**
+     * 新版上传方法
+     */
+    uploadSectionFile(data) {
+      this.uploading = true
+      uploader('font', data.file).then(response => {
+        this.uploading = false
+        const { bucketName, fileName } = response
+        this.ruleForm.name = `/${bucketName}/${fileName}`
+      })
+        .catch(err => {
+          this.uploading = false
+          console.error(err)
+        })
+    },
+    /**
+     * 删除图片
+     */
+    removeImage(file) {
+      const url = this.ruleForm.diePatternimagePath
+      const fileName = url.split('/')[2]
+      removeRemoteImage('font', fileName).then(() => {
+        console.log(`Remove font '${fileName}' successed!`)
+        this.ruleForm.name = ''
+        this.showFileList = false
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {

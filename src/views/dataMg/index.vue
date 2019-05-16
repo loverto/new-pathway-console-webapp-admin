@@ -221,12 +221,14 @@ export default {
         } else {
           text = '所有用户'
         }
-        this.filename = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}') + text + '作品明细表'
-
+        const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
+        this.filename = s + text + '作品明细表'
+        const multiHeader = [['', '', '', '新路通来图个性定制系统', '', '', '', ''], ['', '', '', '作品定制明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
         const data = this.formatJson(filterVal, list)
         excel.export_json_to_excel_sheet({
           headers: [tHeader, tHeader],
           datas: [data, data],
+          multiHeader: multiHeader,
           sheetnames: ['笔记本', '鼠标垫'],
           filename: this.filename,
           autoWidth: this.autoWidth,

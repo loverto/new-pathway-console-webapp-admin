@@ -38,6 +38,17 @@ export function getWorkList(query) {
 }
 
 /**
+ * 获取用户列表
+ */
+export function getWorkListData(query) {
+  return request({
+    url: '/api/users/works/data',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
  * 获取Excel的数据用户列表
  */
 export function getWorkListExcel(query) {
