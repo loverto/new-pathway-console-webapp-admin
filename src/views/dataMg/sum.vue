@@ -16,7 +16,7 @@
         <el-select placeholder="选择用户">
           <el-option />
         </el-select>
-        <el-button type="success" icon="el-icon-download">导出明细</el-button>
+        <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
       </el-form-item>
     </el-form>
 
@@ -68,6 +68,7 @@
 import * as Api from '@/api/agent'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
+import { parseTime } from '@/utils'
 export default {
   name: 'SumList',
   components: { Pagination },
@@ -102,11 +103,17 @@ export default {
       },
       currentSearch: [],
       list: [],
+      exportlist: [],
       roleOptions: [],
       total: 0,
       begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 90)),
       end: new Date(),
       listLoading: true,
+      downloadLoading: false,
+      currentUser: '',
+      filename: '',
+      autoWidth: true,
+      bookType: 'xlsx',
       listQuery: {
         page: 1,
         pageSize: 10
@@ -120,6 +127,35 @@ export default {
     this.getRoleList()
   },
   methods: {
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['账号', '代理姓名', '代理名称', '贴膜使用次数', '鼠标垫使用次数']
+        const filterVal = ['login', 'firstName', 'lastName', 'tmCount', 'sbdCount']
+        const list = this.list
+        let text = ''
+        if (this.currentUser) {
+          text = this.currentSearch
+        } else {
+          text = '所有用户'
+        }
+        const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
+        this.filename = s + text + '作品汇总表'
+
+        const data = this.formatJson(filterVal, list)
+        const multiHeader = ['新路通来图个性定制系统', '作品定制汇总表', '查询日期：' + s, '查询范围：' + text]
+        excel.export_json_to_excel_sheet({
+          headers: [tHeader],
+          datas: [data],
+          multiHeader: multiHeader,
+          sheetnames: ['作品定制汇总表'],
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
     getList() {
       this.listLoading = true
       Api.getWorkList({
@@ -155,6 +191,19 @@ export default {
     },
     formatRole(val) {
       return types.get(val)
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'createdDate') {
+          return parseTime(v[j], '{y}-{m}-{d}')
+        } else {
+          if (j.indexOf('.') > 0) {
+            const t = j.split('.')
+            return v[t[0]][t[1]]
+          }
+          return v[j]
+        }
+      }))
     }
   }
 }
