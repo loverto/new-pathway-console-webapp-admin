@@ -112,7 +112,7 @@ export default {
      * 删除图片
      */
     removeImage(file) {
-      const url = this.ruleForm.diePatternimagePath
+      const url = this.ruleForm.name
       const fileName = url.split('/')[2]
       removeRemoteImage('font', fileName).then(() => {
         console.log(`Remove font '${fileName}' successed!`)
