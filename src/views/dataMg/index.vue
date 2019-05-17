@@ -13,7 +13,7 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentUser" placeholder="选择用户">
+        <el-select v-model="currentUser" placeholder="选择用户" @change="changeUser()">
           <el-option
             v-for="item in usersOptions"
             :key="item.login"
@@ -149,6 +149,7 @@
 
 <script>
 import * as Api from '@/api/custom-template'
+import * as UserApi from '@/api/agent'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -214,33 +215,45 @@ export default {
     this.getUsersOptionList()
   },
   methods: {
+    changeUser() {
+      this.getList()
+    },
     handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['定制编号', '定制型号', '定制类型', '收件人姓名', '客户ID', '定制状态', '定制日期', '代理用户']
-        const filterVal = ['customNumber', 'diePattern.diePatternType', 'modelType.value', 'theRecipientName', 'taobaoNickname', 'finishedCondition.value', 'createdDate', 'user.login']
-        const list = this.bjblist
-        let text = ''
-        if (this.currentUser) {
-          text = this.currentUser
-        } else {
-          text = '所有用户'
-        }
-        const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
-        this.filename = s + text + '作品明细表'
-        const multiHeader = [['', '', '', '新路通来图个性定制系统', '', '', '', ''], ['', '', '', '作品定制明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
-        const data = this.formatJson(filterVal, list)
-        excel.export_json_to_excel_sheet({
-          headers: [tHeader, tHeader],
-          datas: [data, data],
-          multiHeader: multiHeader,
-          sheetnames: ['笔记本', '鼠标垫'],
-          filename: this.filename,
-          autoWidth: this.autoWidth,
-          bookType: this.bookType
+      this.listLoading = true
+      Promise.all([Api.getListByFinishedConditionAndModeTypeId(2, 1, { login: this.currentUser }), Api.getListByFinishedConditionAndModeTypeId(2, 2, { login: this.currentUser })])
+        .then(responses => {
+          this.allbjblist = responses[0].data
+          this.allsjblist = responses[1].data
+          this.listLoading = false
+          this.downloadLoading = true
+          import('@/vendor/Export2Excel').then(excel => {
+            const tHeader = ['定制编号', '定制型号', '定制类型', '收件人姓名', '客户ID', '定制状态', '定制日期', '代理用户']
+            const filterVal = ['customNumber', 'diePattern.diePatternType', 'modelType.value', 'theRecipientName', 'taobaoNickname', 'finishedCondition.value', 'createdDate', 'user.login']
+            const allBjblist = this.allbjblist
+            const allSbdlist = this.allsjblist
+            let text = ''
+            if (this.currentUser) {
+              text = this.currentUser
+            } else {
+              text = '所有用户'
+            }
+            const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
+            this.filename = s + text + '作品明细表'
+            const multiHeader = [['', '', '', '新路通来图个性定制系统', '', '', '', ''], ['', '', '', '作品定制明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
+            const bjbdata = this.formatJson(filterVal, allBjblist)
+            const sbddata = this.formatJson(filterVal, allSbdlist)
+            excel.export_json_to_excel_sheet({
+              headers: [tHeader, tHeader],
+              datas: [bjbdata, sbddata],
+              multiHeader: multiHeader,
+              sheetnames: ['笔记本', '鼠标垫'],
+              filename: this.filename,
+              autoWidth: this.autoWidth,
+              bookType: this.bookType
+            })
+            this.downloadLoading = false
+          })
         })
-        this.downloadLoading = false
-      })
     },
     getList() {
       this.listLoading = true
@@ -248,19 +261,39 @@ export default {
       this.getSbdList()
     },
     getBjbList() {
+      this.listLoading = true
       Api.getListByFinishedConditionAndModeTypeIdByPage(2, 1, {
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        login: this.currentUser
       }).then(response => {
         this.bjblist = response.data
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
     },
+    getAllBjbList() {
+      this.listLoading = true
+      Api.getListByFinishedConditionAndModeTypeId(2, 1).then(response => {
+        this.allbjblist = response.data
+        this.total = Number(response.headers['x-total-count']) || 0
+        this.listLoading = false
+      })
+    },
+    getAllSbdList() {
+      this.listLoading = true
+      Api.getListByFinishedConditionAndModeTypeId(2, 2).then(response => {
+        this.allsjblist = response.data
+        this.total = Number(response.headers['x-total-count']) || 0
+        this.listLoading = false
+      })
+    },
     getSbdList() {
+      this.listLoading = true
       Api.getListByFinishedConditionAndModeTypeIdByPage(2, 2, {
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        login: this.currentUser
       }).then(response => {
         this.sjblist = response.data
         this.total = Number(response.headers['x-total-count']) || 0
@@ -274,7 +307,7 @@ export default {
       this.getList()
     },
     getUsersOptionList() {
-      Api.getList({ page: 0, size: 1000000 }).then(response => {
+      UserApi.getList({ page: 0, size: 1000000 }).then(response => {
         this.usersOptions = response.data
       })
     },

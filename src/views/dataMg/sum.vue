@@ -13,7 +13,7 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentUser" placeholder="选择用户">
+        <el-select v-model="currentUser" placeholder="选择用户" @change="changeUser()">
           <el-option
             v-for="item in usersOptions"
             :key="item.login"
@@ -132,6 +132,9 @@ export default {
     this.getUsersOptionList()
   },
   methods: {
+    changeUser() {
+      this.getList()
+    },
     handleDownload() {
       this.listLoading = true
       this.downloadLoading = true

@@ -23,7 +23,7 @@
 
       <el-table-column align="center" label="字体名称">
         <template slot-scope="scope">
-          <span>{{ scope.row.value }}</span>
+          <span :style="{fontFamily: scope.row.value}">{{ scope.row.value }}</span>
         </template>
       </el-table-column>
 
