@@ -1,25 +1,27 @@
 // eslint-disable-next-line no-unused-vars
-export function export_json_to_excel({
+/**
+ * Created by alex on 17-2-23.
+ */
+// const ExcelJs = require('exceljs')
+import * as ExcelJs from 'exceljs'
+
+export function export_json_to_excel_sheet({
   multiHeader = [],
-  header,
-  data,
-  filename,
+  headers,
+  datas,
+  sheetnames,
   merges = [],
   autoWidth = true,
   bookType = 'xlsx'
 } = {}) {
-  /**
-   * Created by alex on 17-2-23.
-   */
-  const Excel = require('exceljs')
-
+  debugger
   // cell style
   const fills = {
     solid: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFAAAA' }}
   }
 
   // 创建一个工作簿
-  const workbook = new Excel.Workbook()
+  const workbook = new ExcelJs.Workbook()
 
   // add header
   const ws1 = workbook.addWorksheet('测试一')

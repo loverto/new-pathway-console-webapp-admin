@@ -1,6 +1,6 @@
 /* eslint-disable */
 require('script-loader!file-saver');
-import XLSX from 'xlsx'
+import XLSX from 'xlsx-style'
 
 function generateArray(table) {
   var out = [];
@@ -58,6 +58,22 @@ function datenum(v, date1904) {
   return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
 }
 
+
+const borderAll = {  //单元格外侧框线
+  top: {
+    style: 'thin'
+  },
+  bottom: {
+    style: 'thin'
+  },
+  left: {
+    style: 'thin'
+  },
+  right: {
+    style: 'thin'
+  }
+}
+
 function sheet_from_array_of_arrays(data, opts) {
   var ws = {};
   var range = {
@@ -77,7 +93,13 @@ function sheet_from_array_of_arrays(data, opts) {
       if (range.e.r < R) range.e.r = R;
       if (range.e.c < C) range.e.c = C;
       var cell = {
-        v: data[R][C]
+        v: data[R][C],
+        s: {
+          border: borderAll,
+          alignment: {
+            horizontal: 'center'
+          }
+        }
       };
       if (cell.v == null) continue;
       var cell_ref = XLSX.utils.encode_cell({
