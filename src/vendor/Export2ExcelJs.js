@@ -1,74 +1,95 @@
-// eslint-disable-next-line no-unused-vars
-/**
- * Created by alex on 17-2-23.
- */
-// const ExcelJs = require('exceljs')
-import * as ExcelJs from 'exceljs'
+require('script-loader!file-saver')
+import * as ExcelJs from 'exceljs/dist/exceljs'
 
+/**
+ * 支持多sheet 导出excel
+ * @param multiHeader 多行表头
+ * @param headers 多sheet对应的表头
+ * @param datas 数据，一个数组表示一个sheet中的数据
+ * @param filename 文件名称
+ * @param sheetnames sheet名称，数组格式的，数组中按次获取sheet名称
+ * @param merges 合并单元格 未实现
+ * @param autoWidth 自动列宽
+ * @param bookType 文档类型
+ */
 export function export_json_to_excel_sheet({
   multiHeader = [],
-  headers,
-  datas,
-  sheetnames,
+  headers = [],
+  datas = [],
+  filename,
+  sheetnames = [],
   merges = [],
   autoWidth = true,
   bookType = 'xlsx'
 } = {}) {
-  debugger
-  // cell style
-  const fills = {
-    solid: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFAAAA' }}
-  }
-
   // 创建一个工作簿
   const workbook = new ExcelJs.Workbook()
 
-  // add header
-  const ws1 = workbook.addWorksheet('测试一')
-  ws1.addRow(['地址', '地面'])
-  ws1.addRow(['总人口', '不可计数'])
-  ws1.addRow(['类型', '动物', '非动物'])
-  ws1.addRow(['统计日期', '1111-11-11 11:11:11'])
-  ws1.addRow()
+  // 遍历数据
+  for (let tmp = 0; tmp <= datas.length - 1; tmp++) {
+    // 获取数据
+    const data = datas[tmp]
+    // 添加表头, 合并表头的数据
+    const header = headers[tmp]
+    data.unshift(header)
+    // 多行标头
+    for (let i = multiHeader.length - 1; i > -1; i--) {
+      data.unshift(multiHeader[i])
+    }
+    // 获取sheetname
+    var ws_name = sheetnames[tmp]
+    // add header
+    const ws1 = workbook.addWorksheet(ws_name)
+    ws1.addRows(data)
 
-  // A6:E6
-  ws1.addRow(['你', '在', '说些', '神马', '呢？'])
-  ws1.getCell('A6').fill = fills.solid
-  ws1.getCell('B6').fill = fills.solid
-  ws1.getCell('C6').fill = fills.solid
-  ws1.getCell('D6').fill = fills.solid
-  ws1.getCell('E6').fill = fills.solid
+    // 行居中
+    rowCenter(ws1, 1 + multiHeader.length, data.length)
 
-  // 7 - 13(A7:A13) - 7
-  ws1.addRow(['什么跟神马', 10, 1, '凡人修仙传', 7])
-  ws1.addRow(['', '', '', '一号遗迹', 2])
-  ws1.addRow(['', '', '', '六号遗迹', 0])
-  ws1.addRow(['', '', '', '古国一号', 0])
-  ws1.addRow(['', '', '', '锻体期', 0])
-  ws1.addRow(['', '', '', '合体期', 0])
-  ws1.addRow(['', '', '', '没资质', 1])
+    // 自动处理列宽
+    if (autoWidth) {
+      /* 设置worksheet每列的最大宽度*/
+      const columnWidth = data.map(row => row.map(val => {
+        /* 先判断是否为null/undefined*/
+        if (val == null) {
+          return {
+            'width': 10
+          }
+          // eslint-disable-next-line brace-style
+        }
+        /* 再判断是否为中文*/
+        else if (val.toString().charCodeAt(0) > 255) {
+          return {
+            'width': val.toString().length * 2
+          }
+        } else {
+          return {
+            'width': val.toString().length
+          }
+        }
+      }))
+      /* 以第一行为初始值*/
+      const result = columnWidth[0]
+      for (let i = 1; i < columnWidth.length; i++) {
+        for (let j = 0; j < columnWidth[i].length; j++) {
+          if (result[j]['width'] < columnWidth[i][j]['width']) {
+            result[j]['width'] = columnWidth[i][j]['width']
+          }
+        }
+      }
+      // 设置列宽
+      colWidth(ws1, result)
+    }
+  }
 
-  ws1.mergeCells('A7:A13')
-  ws1.mergeCells('B7:B13')
-  ws1.mergeCells('C7:C13')
-
-  // a6-e13 a b c d e
-  // ws1.getCell('A7').alignment = { vertical: 'middle', horizontal: 'center' };
-
-  rowCenter(ws1, 6, 13)
-  colWidth(ws1, [1, 2, 3, 4, 5], 20)
-
-  // eslint-disable-next-line no-unused-vars
-  const ws2 = workbook.addWorksheet('测试二')
-
-  // eslint-disable-next-line no-unused-vars
-  const ws3 = workbook.addWorksheet('测试三')
-
-  // eslint-disable-next-line no-irregular-whitespace
-  // 设置　start-end　行单元格水平垂直居中/添加边框
+  /**
+   *  设置start-end行单元格水平垂直居中/添加边框
+   * @param arg_ws workSheet 参数
+   * @param arg_start 开始行
+   * @param arg_end 结束结束行
+   */
   function rowCenter(arg_ws, arg_start, arg_end) {
     // eslint-disable-next-line no-undef,no-unmodified-loop-condition
-    var i = arg_start
+    let i = arg_start
     for (; i <= arg_end; i++) {
       arg_ws.findRow(i).alignment = { vertical: 'middle', horizontal: 'center' }
       // eslint-disable-next-line no-irregular-whitespace
@@ -86,82 +107,22 @@ export function export_json_to_excel_sheet({
 
   // eslint-disable-next-line no-irregular-whitespace
   // 设置　start-end 列的宽度
-  function colWidth(arg_ws, arg_cols, arg_width) {
+  /**
+   * 设置行宽
+   * @param arg_ws workSheet
+   * @param arg_cols 列数组
+   */
+  function colWidth(arg_ws, arg_cols) {
     for (const i in arg_cols) {
-      arg_ws.getColumn(arg_cols[i]).width = arg_width
+      arg_ws.getColumn(parseInt(i) + 1).width = arg_cols[i].width
     }
   }
 
-  //
-  workbook.xlsx.writeFile('test2.xlsx')
-    .then(function() {
-      console.log('生成 xlsx')
-    })
-
-  // /* original data */
-  // filename = filename || 'excel-list'
-  // data = [...data]
-  // data.unshift(header);
-  //
-  // for (let i = multiHeader.length-1; i > -1; i--) {
-  //   data.unshift(multiHeader[i])
-  // }
-  //
-  // var ws_name = 'SheetJS'
-  // // eslint-disable-next-line no-undef
-  // var wb = new Workbook(),
-  //   ws = sheet_from_array_of_arrays(data);
-  //
-  // if (merges.length > 0) {
-  //   if (!ws['!merges']) ws['!merges'] = [];
-  //   merges.forEach(item => {
-  //     ws['!merges'].push(XLSX.utils.decode_range(item))
-  //   })
-  // }
-  //
-  // if (autoWidth) {
-  //   /*设置worksheet每列的最大宽度*/
-  //   const colWidth = data.map(row => row.map(val => {
-  //     /*先判断是否为null/undefined*/
-  //     if (val == null) {
-  //       return {
-  //         'wch': 10
-  //       };
-  //     }
-  //     /*再判断是否为中文*/
-  //     else if (val.toString().charCodeAt(0) > 255) {
-  //       return {
-  //         'wch': val.toString().length * 2
-  //       };
-  //     } else {
-  //       return {
-  //         'wch': val.toString().length
-  //       };
-  //     }
-  //   }))
-  //   /*以第一行为初始值*/
-  //   let result = colWidth[0];
-  //   for (let i = 1; i < colWidth.length; i++) {
-  //     for (let j = 0; j < colWidth[i].length; j++) {
-  //       if (result[j]['wch'] < colWidth[i][j]['wch']) {
-  //         result[j]['wch'] = colWidth[i][j]['wch'];
-  //       }
-  //     }
-  //   }
-  //   ws['!cols'] = result;
-  // }
-  //
-  // /* add worksheet to workbook */
-  // wb.SheetNames.push(ws_name);
-  // wb.Sheets[ws_name] = ws;
-  //
-  // var wbout = XLSX.write(wb, {
-  //   bookType: bookType,
-  //   bookSST: false,
-  //   type: 'binary'
-  // });
-  // saveAs(new Blob([s2ab(wbout)], {
-  //   type: "application/octet-stream"
-  // }), `${filename}.${bookType}`);
+  // 保存设置
+  workbook.xlsx.writeBuffer().then(buffer => {
+    // eslint-disable-next-line no-undef
+    saveAs(new Blob([buffer], {
+      type: 'application/octet-stream'
+    }), `${filename}.${bookType}`)
+  })
 }
-

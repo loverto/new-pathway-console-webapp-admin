@@ -144,7 +144,7 @@ export default {
         login: this.currentUser
       }).then(response => {
         this.exportlist = response.data
-        import('@/vendor/Export2Excel').then(excel => {
+        import('@/vendor/Export2ExcelJs').then(excel => {
           const tHeader = ['账号', '代理姓名', '代理名称', '贴膜使用次数', '鼠标垫使用次数']
           const filterVal = ['login', 'firstName', 'lastName', 'tmCount', 'sbdCount']
           const list = this.exportlist

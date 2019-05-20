@@ -226,7 +226,7 @@ export default {
           this.allsjblist = responses[1].data
           this.listLoading = false
           this.downloadLoading = true
-          import('@/vendor/Export2Excel').then(excel => {
+          import('@/vendor/Export2ExcelJs').then(excel => {
             const tHeader = ['定制编号', '定制型号', '定制类型', '收件人姓名', '客户ID', '定制状态', '定制日期', '代理用户']
             const filterVal = ['customNumber', 'diePattern.diePatternType', 'modelType.value', 'theRecipientName', 'taobaoNickname', 'finishedCondition.value', 'createdDate', 'user.login']
             const allBjblist = this.allbjblist
