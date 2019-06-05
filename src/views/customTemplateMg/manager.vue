@@ -121,6 +121,7 @@
 
 <script>
 import * as Api from '@/api/custom-template'
+import * as FabricApi from '@/api/fabric-design-materials'
 import * as StateApi from '@/api/custom-state'
 import * as FinishedApi from '@/api/finished-condition'
 import Pagination from '@/components/Pagination'
@@ -157,6 +158,20 @@ export default {
         size: this.listQuery.pageSize
       }).then(response => {
         this.list = response.data
+        this.list.forEach(function(item, index, array) {
+          if (item.modelType.id === 2) {
+            FabricApi.getAllDesignMaterialByCustomNumber(item.customNumber).then(response => {
+              if (response.status === 200 && response.data && response.data.length > 0) {
+                // 遍历数据
+                response.data.forEach(function(item1, index, array) {
+                  if (item1.customTemplate.modelType.id === 1) {
+                    item.diePattern = item1.customTemplate.diePattern
+                  }
+                })
+              }
+            })
+          }
+        })
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
@@ -175,6 +190,20 @@ export default {
           size: this.listQuery.pageSize
         }).then(response => {
           this.list = response.data
+          this.list.forEach(function(item, index, array) {
+            if (item.modelType.id === 2) {
+              FabricApi.getAllDesignMaterialByCustomNumber(item.customNumber).then(response => {
+                if (response.status === 200 && response.data && response.data.length > 0) {
+                  // 遍历数据
+                  response.data.forEach(function(item1, index, array) {
+                    if (item1.customTemplate.modelType.id === 1) {
+                      item.diePattern = item1.customTemplate.diePattern
+                    }
+                  })
+                }
+              })
+            }
+          })
           this.total = Number(response.headers['x-total-count']) || 0
           this.listLoading = false
         })
@@ -239,10 +268,28 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        Api.deleteById(row.id).then(response => {
-          if (response.status === 204) {
-            // 删除成功时刷新页面
-            this.getList()
+        const self = this
+        FabricApi.getAllDesignMaterialByCustomNumber(row.customNumber).then(response => {
+          if (response.status === 200 && response.data && response.data.length > 0) {
+            const data = response.data
+            // 遍历数据
+            data.forEach(function(item, index, array) {
+              FabricApi.deleteById(item.id).then(response => {
+                return Api.deleteById(item.customTemplate.id)
+              }).then(response => {
+                if (response.status === 204) {
+                  // 删除成功时刷新页面
+                  self.getList()
+                }
+              })
+            })
+          } else {
+            Api.deleteById(row.id).then(response => {
+              if (response.status === 204) {
+                // 删除成功时刷新页面
+                self.getList()
+              }
+            })
           }
         })
       }).catch(() => {
