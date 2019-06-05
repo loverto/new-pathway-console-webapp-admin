@@ -64,6 +64,11 @@
 
     </el-table>
 
+    <template>
+      <div>贴膜使用次数：<span style="color: red">{{ totalTm }}</span></div>
+      <div>鼠标垫使用次数：<span style="color: red">{{ totalSbd }}</span></div>
+    </template>
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
   </div>
@@ -119,6 +124,8 @@ export default {
       filename: '',
       autoWidth: true,
       bookType: 'xlsx',
+      totalTm: 0,
+      totalSbd: 0,
       listQuery: {
         page: 1,
         pageSize: 10
@@ -184,6 +191,15 @@ export default {
         login: this.currentUser
       }).then(response => {
         this.list = response.data
+        this.totalTm = 0
+        this.totalSbd = 0
+        this.list.forEach((item) => {
+          // 遍历 tmCount 这个字段，并累加
+          this.totalTm += item.tmCount
+          // 遍历 sbdCount 这个字段，并累加
+          this.totalSbd += item.sbdCount
+        })
+
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
