@@ -102,7 +102,6 @@
 
 <script>
 import * as Api from '@/api/custom-template'
-import * as FabricApi from '@/api/fabric-design-materials'
 import Pagination from '@/components/Pagination'
 import Viewer from '@/components/Viewer'
 import config from '@/utils/config.js'
@@ -134,12 +133,12 @@ export default {
         this.list = response.data
         this.list.forEach(function(item, index, array) {
           if (item.modelType.id === 2) {
-            FabricApi.getAllDesignMaterialByCustomNumber(item.customNumber).then(response => {
+            Api.queryCustomTemplatesByCustomNumber(item.customNumber).then(response => {
               if (response.status === 200 && response.data && response.data.length > 0) {
                 // 遍历数据
                 response.data.forEach(function(item1, index, array) {
-                  if (item1.customTemplate.modelType.id === 1) {
-                    item.diePattern = item1.customTemplate.diePattern
+                  if (item1.modelType.id === 1) {
+                    item.diePattern = item1.diePattern
                   }
                 })
               }

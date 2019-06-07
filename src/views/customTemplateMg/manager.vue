@@ -160,12 +160,12 @@ export default {
         this.list = response.data
         this.list.forEach(function(item, index, array) {
           if (item.modelType.id === 2) {
-            FabricApi.getAllDesignMaterialByCustomNumber(item.customNumber).then(response => {
+            Api.queryCustomTemplatesByCustomNumber(item.customNumber).then(response => {
               if (response.status === 200 && response.data && response.data.length > 0) {
                 // 遍历数据
                 response.data.forEach(function(item1, index, array) {
-                  if (item1.customTemplate.modelType.id === 1) {
-                    item.diePattern = item1.customTemplate.diePattern
+                  if (item1.modelType.id === 1) {
+                    item.diePattern = item1.diePattern
                   }
                 })
               }
@@ -192,12 +192,12 @@ export default {
           this.list = response.data
           this.list.forEach(function(item, index, array) {
             if (item.modelType.id === 2) {
-              FabricApi.getAllDesignMaterialByCustomNumber(item.customNumber).then(response => {
+              Api.queryCustomTemplatesByCustomNumber(item.customNumber).then(response => {
                 if (response.status === 200 && response.data && response.data.length > 0) {
                   // 遍历数据
                   response.data.forEach(function(item1, index, array) {
-                    if (item1.customTemplate.modelType.id === 1) {
-                      item.diePattern = item1.customTemplate.diePattern
+                    if (item1.modelType.id === 1) {
+                      item.diePattern = item1.diePattern
                     }
                   })
                 }
@@ -270,27 +270,45 @@ export default {
       }).then(() => {
         const self = this
         FabricApi.getAllDesignMaterialByCustomNumber(row.customNumber).then(response => {
-          if (response.status === 200 && response.data && response.data.length > 0) {
-            const data = response.data
-            // 遍历数据
-            data.forEach(function(item, index, array) {
-              FabricApi.deleteById(item.id).then(response => {
-                return Api.deleteById(item.customTemplate.id)
-              }).then(response => {
+          return new Promise(resolve => {
+            if (response.status === 200 && response.data && response.data.length > 0) {
+              const data = response.data
+              // 遍历数据
+              data.forEach(function(item, index, array) {
+                FabricApi.deleteById(item.id).then(response => {
+                  return Api.deleteById(item.customTemplate.id)
+                }).then(response => {
+                  if (response.status === 204) {
+                    // 删除成功时刷新页面
+                    self.getList()
+                    resolve()
+                  }
+                })
+              })
+            } else {
+              Api.deleteById(row.id).then(response => {
                 if (response.status === 204) {
                   // 删除成功时刷新页面
                   self.getList()
+                  resolve()
                 }
               })
-            })
-          } else {
-            Api.deleteById(row.id).then(response => {
-              if (response.status === 204) {
-                // 删除成功时刷新页面
-                self.getList()
-              }
-            })
-          }
+            }
+          })
+        }).then(response => {
+          Api.queryCustomTemplatesByCustomNumber(row.customNumber).then(response => {
+            if (response.status === 200 && response.data && response.data.length > 0) {
+              // 遍历数据
+              response.data.forEach(function(item1, index, array) {
+                Api.deleteById(item1.id).then(response => {
+                  if (response.status === 204) {
+                    // 删除成功时刷新页面
+                    self.getList()
+                  }
+                })
+              })
+            }
+          })
         })
       }).catch(() => {
         // Do nothing

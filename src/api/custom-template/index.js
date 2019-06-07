@@ -91,3 +91,13 @@ export function getSearchList(query) {
   })
 }
 
+/**
+ * 根据定制编号获取定制模版
+ */
+export function queryCustomTemplatesByCustomNumber(customNumber, query) {
+  return request({
+    url: `/api/custom-templates/custom-number/${customNumber}`,
+    method: 'get',
+    params: query
+  })
+}
