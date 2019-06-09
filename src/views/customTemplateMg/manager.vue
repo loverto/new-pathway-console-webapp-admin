@@ -165,7 +165,10 @@ export default {
                 // 遍历数据
                 response.data.forEach(function(item1, index, array) {
                   if (item1.modelType.id === 1) {
-                    item.diePattern = item1.diePattern
+                    // 品牌
+                    item.diePattern.computerType.value = item1.diePattern.computerType.value
+                    // 型号
+                    item.diePattern.diePatternType = item1.diePattern.diePatternType
                   }
                 })
               }
@@ -197,7 +200,10 @@ export default {
                   // 遍历数据
                   response.data.forEach(function(item1, index, array) {
                     if (item1.modelType.id === 1) {
-                      item.diePattern = item1.diePattern
+                      // 品牌
+                      item.diePattern.computerType.value = item1.diePattern.computerType.value
+                      // 型号
+                      item.diePattern.diePatternType = item1.diePattern.diePatternType
                     }
                   })
                 }
