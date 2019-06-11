@@ -2,9 +2,9 @@
   <div class="app-container product-wrapper">
     <el-input v-model="currentSearch" placeholder="查找 字体" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-    <router-link to="/font/add">
-      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加字体名称</el-button>
-    </router-link>
+    <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus" @click="handleAdd(null)">添加字体名称</el-button>
+    <el-button type="primary" class="add-btn" size="small" icon="el-icon-more" @click="handleAddFont(config)">管理字体包</el-button>
+    <el-button type="primary" class="add-btn" size="small" icon="el-icon-download" @click="downloadFont(null)">下载字体包</el-button>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"
@@ -45,12 +45,23 @@
     <el-dialog
       v-if="showMask"
       :visible.sync="showMask"
-      title="编辑字体名称"
+      :title="title"
       top="5vh"
       class="product-edit__dialog"
       @close="handleClose"
     >
-      <add-page :form-data="curProd" button-text="编辑" />
+      <add-page :form-data="curProd" :button-text="buttonText" />
+    </el-dialog>
+    <!-- 上传字体包弹框 -->
+    <el-dialog
+      v-if="showFontMask"
+      :visible.sync="showFontMask"
+      :title="fontTitle"
+      top="5vh"
+      class="product-edit__dialog"
+      @close="handleFontClose"
+    >
+      <upload-font :form-data="curProd" :button-text="buttonFontText" />
     </el-dialog>
 
   </div>
@@ -58,30 +69,40 @@
 
 <script>
 import * as Api from '@/api/font-type'
+import * as ConfigApi from '@/api/config'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
+import UploadFont from './edit.vue'
 import config from '@/utils/config.js'
 export default {
   name: 'FontList',
-  components: { AddPage, Pagination },
+  components: { AddPage, Pagination, UploadFont },
   data() {
     return {
       list: [],
       total: 0,
+      title: '编辑字体名称',
+      fontTitle: '编辑字体名称',
+      buttonFontText: '',
+      buttonText: '',
       listLoading: true,
       currentSearch: '',
+      config: {},
       listQuery: {
         page: 1,
         pageSize: 10
       },
       showMask: false,
+      showFontMask: false,
       curProd: null,
       baseImgUrl: config.baseImgUrl
     }
   },
   created() {
     this.loadAll()
+    // 获取配置
+    this.getConfig()
 
     // 监听一个保存成功的回调
     // 用于修改产品后触发列表刷新
@@ -91,6 +112,13 @@ export default {
     })
   },
   methods: {
+    getConfig() {
+      ConfigApi.getList().then(response => {
+        if (response.status === 200) {
+          config = response.data[0]
+        }
+      })
+    },
     getList() {
       this.listLoading = true
       const data = {
@@ -144,8 +172,25 @@ export default {
     handleEdit(row) {
       this.showMask = true
       this.curProd = row
+      this.title = '编辑字体名称'
+      this.buttonText = '编辑'
+    },
+    handleAdd(row) {
+      this.showMask = true
+      this.curProd = row
+      this.title = '添加字体名称'
+      this.buttonText = '添加'
+    },
+    handleAddFont(row) {
+      this.showFontMask = true
+      this.curProd = row
+      this.fontTitle = '添加字体包'
+      this.buttonFontText = '添加'
     },
     handleClose() {
+      this.curProd = null
+    },
+    handleFontClose() {
       this.curProd = null
     },
     formatType(val) {

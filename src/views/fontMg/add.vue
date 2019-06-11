@@ -2,29 +2,6 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="字体文件:" prop="name">
-          <el-upload
-            :multiple="false"
-            :show-file-list="showFileList"
-            :limit="1"
-            :http-request="uploadSectionFile"
-            :on-remove="removeImage"
-            :before-upload="beforeUpload"
-            list-type="text"
-            action="string"
-            accept=".ttf,.woff"
-          >
-            <el-button
-              :disabled="ruleForm.name ? true : false"
-              size="small"
-              type="primary"
-            >
-              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
-            </el-button>
-            <div slot="tip" class="el-upload__tip">只能上传ttf/woff格式的文件哦~</div>
-          </el-upload>
-        </el-form-item>
-
         <el-form-item label="字体名称:" prop="value">
           <el-input v-model="ruleForm.value" placeholder="字体名称显示值..." class="width-50p" />
         </el-form-item>
@@ -59,16 +36,10 @@ export default {
   data() {
     return {
       ruleForm: {
-        id: 0,
-        // 品牌代码值
-        name: '',
         // 品牌显示值
         value: ''
       },
       rules: {
-        name: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
         value: [
           { required: true, message: '必填项', trigger: 'blur' }
         ]
