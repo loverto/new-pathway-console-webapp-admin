@@ -26,6 +26,16 @@ const bannerRouter = {
       }
     },
     {
+      path: '/font-manager/index',
+      component: () => import('@/views/fontManagerMg/index'),
+      name: 'FontManagerMgList',
+      meta: {
+        title: '字体文件管理',
+        icon: 'list',
+        roles
+      }
+    },
+    {
       path: '/die-pattern/add',
       hidden: true,
       component: () => import('@/views/diePatternMg/add'),

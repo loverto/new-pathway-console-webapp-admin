@@ -3,8 +3,6 @@
     <el-input v-model="currentSearch" placeholder="查找 字体" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
     <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus" @click="handleAdd(null)">添加字体名称</el-button>
-    <el-button type="primary" class="add-btn" size="small" icon="el-icon-more" @click="handleAddFont(config)">管理字体包</el-button>
-    <el-button type="primary" class="add-btn" size="small" icon="el-icon-download" @click="downloadFont(null)">下载字体包</el-button>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"
@@ -69,7 +67,6 @@
 
 <script>
 import * as Api from '@/api/font-type'
-import * as ConfigApi from '@/api/config'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
@@ -88,7 +85,7 @@ export default {
       buttonText: '',
       listLoading: true,
       currentSearch: '',
-      config: {},
+      studioConfig: {},
       listQuery: {
         page: 1,
         pageSize: 10
@@ -101,8 +98,6 @@ export default {
   },
   created() {
     this.loadAll()
-    // 获取配置
-    this.getConfig()
 
     // 监听一个保存成功的回调
     // 用于修改产品后触发列表刷新
@@ -112,13 +107,6 @@ export default {
     })
   },
   methods: {
-    getConfig() {
-      ConfigApi.getList().then(response => {
-        if (response.status === 200) {
-          config = response.data[0]
-        }
-      })
-    },
     getList() {
       this.listLoading = true
       const data = {

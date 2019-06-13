@@ -350,6 +350,59 @@ export function removeClass(ele, cls) {
 }
 
 /**
+ * base64  to blob二进制
+ */
+
+export function dataURItoBlob(dataURI) {
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0] // mime类型
+  const byteString = atob(dataURI.split(',')[1]) // base64 解码
+  const arrayBuffer = new ArrayBuffer(byteString.length) // 创建缓冲数组
+  const intArray = new Uint8Array(arrayBuffer) // 创建视图
+
+  for (let i = 0; i < byteString.length; i++) {
+    intArray[i] = byteString.charCodeAt(i)
+  }
+  return new Blob([intArray], { type: mimeString })
+}
+
+/**
+ * 是否是URL
+ */
+function isURL(strUrl) {
+  /* eslint-disable */
+  var strRegex = '^((https|http|ftp|rtsp|mms)?://)' +
+    "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" + // ftp的user@
+    '(([0-9]{1,3}\.){3}[0-9]{1,3}' + // IP形式的URL- 199.194.52.184
+    '|' + // 允许IP和DOMAIN（域名）
+    "([0-9a-z_!~*'()-]+\.)*" + // 域名- www.
+    '([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\.' + // 二级域名
+    '[a-z]{2,6})' + // first level domain- .com or .museum
+    '(:[0-9]{1,4})?' + // 端口- :80
+    '((/?)|' + // a slash isn't required if there is no file name
+    "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$"
+  var re = new RegExp(strRegex)
+  return re.test(strUrl)
+}
+
+/**
+ * 下载
+ */
+export function download (url, fileName) {
+  debugger
+  const link = document.createElement('a')
+  if (isURL(url)) {
+    link.href = url
+  } else {
+    link.href = window.URL.createObjectURL(dataURItoBlob(url))
+  }
+  link.download = fileName
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+
+/**
  * 获取唯一id
  */
 export function getUuid() {
