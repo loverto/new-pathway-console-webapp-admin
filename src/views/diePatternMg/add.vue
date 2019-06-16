@@ -19,6 +19,7 @@
 
         <el-form-item label="图片:">
           <el-upload
+            ref="upload"
             :multiple="false"
             :show-file-list="showFileList"
             :limit="1"
@@ -42,7 +43,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即添加</el-button>
+          <el-button :disabled="uploading" type="primary" @click="submitForm('ruleForm')">立即添加</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
 
@@ -130,6 +131,7 @@ export default {
       removeRemoteImage('die-pattern', fileName).then(() => {
         console.log(`Remove image '${fileName}' successed!`)
         this.ruleForm.diePatternimagePath = ''
+        this.ruleForm.diePatternType = ''
         this.showFileList = false
       })
     },
@@ -168,6 +170,11 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      // 清空刀模图路径
+      this.ruleForm.diePatternimagePath = ''
+      this.ruleForm.diePatternType = ''
+      // 清空上传列表
+      this.$refs.upload.clearFiles()
     }
   }
 }
