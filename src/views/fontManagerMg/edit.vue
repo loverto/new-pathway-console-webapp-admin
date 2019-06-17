@@ -15,7 +15,6 @@
             accept=".zip,.rar"
           >
             <el-button
-              :disabled="ruleForm.productionRenderingSaveLocation ? true : false"
               size="small"
               type="primary"
             >
