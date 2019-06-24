@@ -16,6 +16,16 @@ export function getList(query) {
 }
 
 /**
+ * 删除用户
+ */
+export function deleteByLogin(login) {
+  return request({
+    url: `/api/users/${login}`,
+    method: 'delete'
+  })
+}
+
+/**
  * 获取用户列表
  */
 export function getSearchList(query) {

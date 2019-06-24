@@ -73,7 +73,7 @@ const actions = {
           reject('getInfo: roles must be a non-null array !')
         }
 
-        commit('SET_NAME', data.login)
+        commit('SET_NAME', data.firstName)
         commit('SET_AVATAR', data.imageUrl)
         commit('SET_INTRODUCTION', data.firstName)
         resolve(response)

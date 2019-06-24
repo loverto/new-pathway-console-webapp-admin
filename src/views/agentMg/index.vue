@@ -89,6 +89,7 @@
             @click="handleActived(scope.row)"
           >激活
           </el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -241,6 +242,19 @@ export default {
       this.showMask = true
       this.maskTitle = '编辑'
       this.ruleForm = Object.assign({}, row || {})
+    },
+    handleDelete(row) {
+      this.$confirm('您此操作会很严重，将会删除当前选中用户，请再次确认！！！', '重要提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        Api.deleteByLogin(row.login).then(response => {
+          if (response.status === 204) {
+            this.getList()
+          }
+        })
+      })
     },
     modify(row) {
       Api.modify(row).then(response => {
