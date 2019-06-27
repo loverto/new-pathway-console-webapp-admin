@@ -16,12 +16,32 @@ export function getList(query) {
 }
 
 /**
+ * 获取用户列表
+ */
+export function getUserExtendByUserId(id) {
+  return request({
+    url: `/api/user-extends/user/${id}`,
+    method: 'get'
+  })
+}
+
+/**
  * 删除用户
  */
 export function deleteByLogin(login) {
   return request({
     url: `/api/users/${login}`,
     method: 'delete'
+  })
+}
+
+/**
+ * 获取用户
+ */
+export function getByLogin(login) {
+  return request({
+    url: `/api/users/${login}`,
+    method: 'get'
   })
 }
 
@@ -111,6 +131,28 @@ export function modify(data) {
   return request({
     url: '/api/users',
     method: 'put',
+    data
+  })
+}
+
+/**
+ * 修改用户扩展信息
+ */
+export function update(data) {
+  return request({
+    url: '/api/user-extends',
+    method: 'put',
+    data
+  })
+}
+
+/**
+ * 新增用户扩展信息
+ */
+export function save(data) {
+  return request({
+    url: '/api/user-extends',
+    method: 'post',
     data
   })
 }
