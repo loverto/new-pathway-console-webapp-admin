@@ -95,7 +95,7 @@ export default {
     },
     agentList() {
       getList().then(response => {
-        this.agentNumber = response.data.length
+        this.agentNumber = Number(response.headers['x-total-count']) || 0
       })
     },
     orderList() {
