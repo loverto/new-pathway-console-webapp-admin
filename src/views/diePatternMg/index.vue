@@ -38,6 +38,15 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="刀行图">
+        <template slot-scope="scope">
+          <template v-if="scope.row.linePatternimagePath">
+            <viewer :img-src="baseImgUrl + scope.row.linePatternimagePath" :zoom="1" />
+            <!--            <img :src="'http://th.minio.boyuanziben.cn' + scope.row.diePatternimagePath" :alt="scope.row.diePatternType" width="50px;">-->
+          </template>
+          <template v-else>-</template>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="刀模图">
         <template slot-scope="scope">
           <template v-if="scope.row.diePatternimagePath">
