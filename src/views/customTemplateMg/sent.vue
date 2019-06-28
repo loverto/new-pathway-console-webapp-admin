@@ -128,7 +128,8 @@ export default {
       this.listLoading = true
       Api.getListByCustomState(3, {
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        sort: 'lastModifiedDate,desc'
       }).then(response => {
         this.list = response.data
         this.list.forEach(function(item, index, array) {

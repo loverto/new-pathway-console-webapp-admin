@@ -214,7 +214,8 @@ export default {
       this.listLoading = true
       Api.getList({
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        sort: 'lastModifiedDate,desc'
       }).then(response => {
         this.list = response.data
         this.total = Number(response.headers['x-total-count']) || 0
@@ -274,7 +275,8 @@ export default {
         Api.getSearchList({
           query: this.currentSearch,
           page: this.listQuery.page - 1,
-          size: this.listQuery.pageSize
+          size: this.listQuery.pageSize,
+          sort: 'lastModifiedDate,desc'
         }).then(response => {
           this.list = response.data
           this.total = Number(response.headers['x-total-count']) || 0
