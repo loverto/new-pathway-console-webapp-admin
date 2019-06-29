@@ -138,16 +138,11 @@ export default {
       this.getList()
     },
     handleDelete(row) {
-      this.$confirm('确定要删除吗?', '提示', {
+      this.$confirm('确定要删除吗?确认刀模图是否有订单使用，如果有定制订单使用则无法删除！', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        if (row.diePatternimagePath) {
-          this.removeImageFromMinio(row.diePatternimagePath).then(() => {
-            console.log(`Remove remote image successed!`)
-          })
-        }
         this.doDelete(row.id).then(response => {
           if (response && response.status === 204) {
             this.$message({
@@ -156,7 +151,16 @@ export default {
             })
             this.getList()
           }
+          if (row.diePatternimagePath) {
+            this.removeImageFromMinio(row.diePatternimagePath).then(() => {
+              console.log(`Remove remote image successed!`)
+            })
+          }
         }).catch(err => {
+          this.$message({
+            message: '删除失败，确认刀模图是否有订单使用，如果有订单使用则无法删除！',
+            type: 'error'
+          })
           console.error(err)
         })
       }).catch(() => {
