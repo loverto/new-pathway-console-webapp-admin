@@ -130,7 +130,8 @@ export default {
       this.listLoading = true
       Api.getAudits({
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize
+        size: this.listQuery.pageSize,
+        sort: 'auditEventDate,desc'
       }).then(response => {
         this.list = response.data
         this.total = Number(response.headers['x-total-count']) || 0
