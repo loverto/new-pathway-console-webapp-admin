@@ -17,7 +17,7 @@
           <el-input v-model="ruleForm.diePatternType" placeholder="笔记本型号(默认读取上传文件名称)..." class="width-50p" />
         </el-form-item>
 
-        <el-form-item label="图片:">
+        <el-form-item label="刀模图片:">
           <el-upload
             ref="upload"
             :multiple="false"
@@ -32,6 +32,30 @@
           >
             <el-button
               :disabled="ruleForm.diePatternimagePath ? true : false"
+              size="small"
+              type="primary"
+            >
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
+            </el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png格式的文件哦~</div>
+          </el-upload>
+
+        </el-form-item>
+        <el-form-item label="线行图片:">
+          <el-upload
+            ref="upload"
+            :multiple="false"
+            :show-file-list="showLineFileList"
+            :limit="1"
+            :http-request="uploadLineSectionFile"
+            :on-remove="removeLineImage"
+            :before-upload="beforeLineUpload"
+            list-type="picture"
+            action="string"
+            accept=".jpeg,.jpg,.png"
+          >
+            <el-button
+              :disabled="ruleForm.linePatternimagePath ? true : false"
               size="small"
               type="primary"
             >
@@ -65,7 +89,8 @@ export default {
           id: 1
         },
         diePatternType: '',
-        diePatternimagePath: ''
+        diePatternimagePath: '',
+        linePatternimagePath: ''
       },
       total: 0,
       options: [],
@@ -82,10 +107,14 @@ export default {
         ],
         diePatternimagePath: [
           { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        linePatternimagePath: [
+          { required: true, message: '必填项', trigger: 'blur' }
         ]
       },
       uploading: false,
-      showFileList: true
+      showFileList: true,
+      showLineFileList: true
     }
   },
   created() {
@@ -135,6 +164,48 @@ export default {
         this.showFileList = false
       })
     },
+    beforeLineUpload(file) {
+      if (!file) return false
+
+      const ext = /\.[^\.]+$/.exec(file.name)[0]
+
+      if (!/\.(jpe?g|png)/.test(ext)) {
+        this.showLineFileList = false
+        this.$message({
+          message: '只允许上传 jpg/jpeg/png 格式的图片哦~',
+          type: 'warning'
+        })
+        return false
+      }
+    },
+    /**
+     * 新版上传方法
+     */
+    uploadLineSectionFile(data) {
+      this.uploading = true
+      this.ruleForm.linePatternType = data.file.name.split('.')[0]
+      uploader('die-pattern', data.file).then(response => {
+        this.uploading = false
+        const { bucketName, fileName } = response
+        this.ruleForm.linePatternimagePath = `/${bucketName}/${fileName}`
+      })
+        .catch(err => {
+          this.uploading = false
+          console.error(err)
+        })
+    },
+    /**
+     * 删除图片
+     */
+    removeLineImage(file) {
+      const url = this.ruleForm.linePatternimagePath
+      const fileName = url.split('/')[2]
+      removeRemoteImage('die-pattern', fileName).then(() => {
+        console.log(`Remove image '${fileName}' successed!`)
+        this.ruleForm.linePatternimagePath = ''
+        this.showLineFileList = false
+      })
+    },
     getList() {
       getList({
         page: this.listQuery.page - 1,
@@ -172,6 +243,7 @@ export default {
       this.$refs[formName].resetFields()
       // 清空刀模图路径
       this.ruleForm.diePatternimagePath = ''
+      this.ruleForm.linePatternimagePath = ''
       this.ruleForm.diePatternType = ''
       // 清空上传列表
       this.$refs.upload.clearFiles()

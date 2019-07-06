@@ -17,77 +17,87 @@
         width="50"
       />
 
-      <el-table-column align="center" label="用户姓名" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.firstName }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="代理名称" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.lastName }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="登录账号" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.login }}</span>
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="用户姓名" width="150">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.firstName" />
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="登录密码" width="150">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.password" type="password" />
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="代理名称" width="150">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.lastName" />
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="联系电话" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.imageUrl }}</span>
+          <el-input v-model="scope.row.imageUrl" />
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="常用邮箱" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.email }}</span>
+          <el-input v-model="scope.row.email" />
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="是否激活" width="100">
+      <el-table-column align="center" label="角色" width="200">
         <template slot-scope="scope">
-          <span v-if="scope.row.activated">激活</span>
-          <span v-else>未激活</span>
+          <el-select v-model="scope.row.authorities" multiple class="width-192" placeholder="请选择">
+            <el-option
+              v-for="item in roleOptions"
+              :key="item"
+              :label="formatRole(item)"
+              :value="item"
+            />
+          </el-select>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="创建人" width="100">
+      <el-table-column align="center" label="账户状态" width="100">
         <template slot-scope="scope">
-          <span>{{ scope.row.createdBy }}</span>
+          <el-select v-model="scope.row.activated">
+            <el-option
+              v-for="item in activatedOptions"
+              :key="item.id"
+              :label="item.value"
+              :value="item.id"
+            />
+          </el-select>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="创建时间">
+      <el-table-column align="center" label="加入日期-有效日期" width="350">
         <template slot-scope="scope">
-          <span v-if="scope.row.createdDate&&scope.row.createdDate.length>0">{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-          <span v-else>-</span>
+          <el-date-picker
+            v-model="scope.row.currentDate"
+            :picker-options="pickerOptions"
+            type="daterange"
+            align="right"
+            unlink-panels
+            range-separator="至"
+            start-placeholder="加入日期"
+            end-placeholder="有效日期"
+          />
         </template>
+
       </el-table-column>
 
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="resetPwd(scope.row)">
-            <svg-icon icon-class="password" /> 重置密码
-          </el-button>
-          <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-          <el-button
-            v-if="scope.row.activated"
-            type="danger"
-            size="small"
-            @click="handleDisabled(scope.row)"
-          >
-            <svg-icon icon-class="disabled" /> 禁用
-          </el-button>
-          <el-button
-            v-else
-            type="primary"
-            size="small"
-            icon="el-icon-circle-check-outline"
-            @click="handleActived(scope.row)"
-          >激活
+          <el-button type="primary" size="small" @click="handleSave(scope.row)">
+            <svg-icon icon-class="password" /> 保存
           </el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -175,8 +185,77 @@ export default {
       }
     }
     return {
+      pickerOptions: {
+        shortcuts: [{
+          text: '一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '六个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 180)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '一年',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 360)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '二年',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 720)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '五年',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 1800)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '十年',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(start.getTime() + 3600 * 1000 * 24 * 3600)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
       list: [],
+      currentDate: [],
       currentSearch: '',
+      activatedOptions: [{ id: true, value: '启用' }, { id: false, value: '禁用' }],
       roleOptions: [],
       total: 0,
       listLoading: true,
@@ -216,10 +295,17 @@ export default {
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
         sort: 'lastModifiedDate,desc'
-      }).then(response => {
-        this.list = response.data
-        this.total = Number(response.headers['x-total-count']) || 0
-        this.listLoading = false
+      }).then(response1 => {
+        const data = response1.data
+        data.forEach(item => {
+          Api.getUserExtendByUserId(item.id).then(response => {
+            item.currentDate = []
+            item.currentDate.push(response.data.joinDate, response.data.endDate)
+            this.list = data
+            this.total = Number(response1.headers['x-total-count']) || 0
+            this.listLoading = false
+          })
+        })
       })
     },
     getRoleList() {
@@ -256,6 +342,61 @@ export default {
           }
         })
       })
+    },
+    handleSave(row) {
+      // 有密码处理密码
+      if (row.password) {
+        Api.resetpwd({
+          authorities: row.authorities,
+          id: row.id,
+          firstName: row.firstName,
+          login: row.login,
+          password: row.password,
+          activated: row.activated,
+          langKey: row.langKey,
+          email: row.email
+        }).then(response => {
+          Api.getUserExtendByUserId(row.id).then(response => {
+            if (response.status !== 200) {
+              return null
+            }
+            const userExtend = response.data
+            userExtend.endDate = row.currentDate[1]
+            userExtend.joinDate = row.currentDate[0]
+            return Api.update(userExtend)
+          }).then(response => {
+            return Api.modify(row)
+          }).then(response => {
+            if (response.status === 200) {
+              this.getList()
+              this.$message({
+                message: '保存成功！',
+                type: 'success'
+              })
+            }
+          })
+        })
+      } else {
+        Api.getUserExtendByUserId(row.id).then(response => {
+          if (response.status !== 200) {
+            return null
+          }
+          const userExtend = response.data
+          userExtend.endDate = row.currentDate[1]
+          userExtend.joinDate = row.currentDate[0]
+          return Api.update(userExtend)
+        }).then(response => {
+          return Api.modify(row)
+        }).then(response => {
+          if (response.status === 200) {
+            this.getList()
+            this.$message({
+              message: '保存成功！',
+              type: 'success'
+            })
+          }
+        })
+      }
     },
     modify(row) {
       Api.modify(row).then(response => {
@@ -305,37 +446,35 @@ export default {
       this.modify(r)
     },
     submitForm(formName) {
-      if (this.maskTitle === '新增') {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            Api.register(this.ruleForm).then(response => {
-              if (response.status === 201) {
-                this.$message({
-                  message: '保存成功！',
-                  type: 'success'
-                })
-                this.showMask = false
-                this.getList()
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          Api.register(this.ruleForm).then(response => {
+            // 获取登录用户
+            return Api.getByLogin(this.ruleForm.login)
+          }).then(response => {
+            // 保存
+            return Api.save({
+              'user': {
+                'id': response.data.id
               }
-            }).catch(err => {
-              console.error(err)
             })
-          } else {
-            return false
-          }
-        })
-      } else {
-        Api.modify(this.ruleForm).then(response => {
-          if (response.status === 200) {
-            this.$message({
-              message: '修改成功！',
-              type: 'success'
-            })
-            this.showMask = false
-            this.getList()
-          }
-        })
-      }
+          }).then(response => {
+            if (response.status === 201) {
+              this.$message({
+                message: '保存成功！',
+                type: 'success'
+              })
+              this.showMask = false
+              this.getList()
+              this.resetRuleForm()
+            }
+          }).catch(err => {
+            console.error(err)
+          })
+        } else {
+          return false
+        }
+      })
     },
     resetPwd(row) {
       this.$confirm('确定要重置密码吗?', '提示', {
