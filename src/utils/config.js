@@ -1,4 +1,4 @@
 export default {
-  baseImgUrl: 'http://th.minio.boyuanziben.cn',
-  baseFileUrl: 'http://minio.boyuanziben.cn'
+  baseImgUrl: 'http://photo.minio.xintonglu.top',
+  baseFileUrl: 'http://minio.xintonglu.top'
 }
