@@ -2,9 +2,7 @@
   <div class="app-container banner-wrapper">
     <el-input v-model="currentSearch" placeholder="查找 刀模图" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-    <router-link to="/die-pattern/add">
-      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加刀模图</el-button>
-    </router-link>
+    <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus" @click="handleAdd">添加刀模图</el-button>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"
@@ -38,7 +36,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="刀行图">
+      <el-table-column align="center" label="线模图">
         <template slot-scope="scope">
           <template v-if="scope.row.linePatternimagePath">
             <viewer :img-src="baseImgUrl + scope.row.linePatternimagePath" :zoom="1" />
@@ -60,10 +58,23 @@
       <el-table-column align="center" label="操作">
         <template slot-scope="scope">
           <el-button type="danger" class="del-btn" size="small" icon="el-icon-error" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <!-- 编辑刀模图弹框 -->
+    <el-dialog
+      v-if="showMask"
+      :visible.sync="showMask"
+      :title="maskTitle + '刀模图'"
+      top="5vh"
+      class="product-edit__dialog"
+      @close="handleClose"
+    >
+      <add-page :form-data="curProd" :button-text="maskTitle" />
+    </el-dialog>
+
   </div>
 </template>
 
@@ -73,9 +84,10 @@ import Pagination from '@/components/Pagination'
 import { removeRemoteImage } from '@/utils/file-uploader.js'
 import Viewer from '@/components/Viewer'
 import config from '@/utils/config.js'
+import AddPage from './add.vue'
 export default {
   name: 'DiePatternList',
-  components: { Pagination, Viewer },
+  components: { AddPage, Pagination, Viewer },
   data() {
     return {
       list: [],
@@ -86,7 +98,10 @@ export default {
         page: 1,
         pageSize: 10
       },
-      baseImgUrl: config.baseImgUrl
+      baseImgUrl: config.baseImgUrl,
+      maskTitle: '',
+      showMask: false,
+      curProd: null
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -145,6 +160,18 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.page = val
       this.getList()
+    },
+    handleEdit(row) {
+      this.showMask = true
+      this.curProd = row
+      this.maskTitle = '编辑'
+    },
+    handleAdd() {
+      this.showMask = true
+      this.maskTitle = '添加'
+    },
+    handleClose() {
+      this.curProd = {}
     },
     handleDelete(row) {
       this.$confirm('确定要删除吗?确认刀模图是否有订单使用，如果有定制订单使用则无法删除！', '提示', {

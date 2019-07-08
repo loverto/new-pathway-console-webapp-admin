@@ -31,11 +31,19 @@
             accept=".jpeg,.jpg,.png"
           >
             <el-button
+              v-if="maskTitle === '添加'"
               :disabled="ruleForm.diePatternimagePath ? true : false"
               size="small"
               type="primary"
             >
-              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击{{ buttonText }}
+            </el-button>
+            <el-button
+              v-else
+              size="small"
+              type="primary"
+            >
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击{{ buttonText }}
             </el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png格式的文件哦~</div>
           </el-upload>
@@ -55,11 +63,19 @@
             accept=".jpeg,.jpg,.png"
           >
             <el-button
+              v-if="buttonText === 添加"
               :disabled="ruleForm.linePatternimagePath ? true : false"
               size="small"
               type="primary"
             >
-              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击上传
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击{{ buttonText }}
+            </el-button>
+            <el-button
+              v-else
+              size="small"
+              type="primary"
+            >
+              <i :class="'el-icon-' + (uploading ? 'loading' : 'upload')" />  点击{{ buttonText }}
             </el-button>
             <div slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png格式的文件哦~</div>
           </el-upload>
@@ -67,7 +83,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button :disabled="uploading" type="primary" @click="submitForm('ruleForm')">立即添加</el-button>
+          <el-button :disabled="uploading" type="primary" @click="submitForm('ruleForm')">立即{{ buttonText }}</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
 
@@ -77,10 +93,23 @@
 </template>
 
 <script>
-import { add } from '@/api/die-pattern'
+import { deepClone } from '@/utils'
+import { add, update } from '@/api/die-pattern'
 import { getList } from '@/api/computer-type'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
+
 export default {
+  name: 'AddOrEditDiePatternPage',
+  props: {
+    formData: {
+      type: Object,
+      default: null
+    },
+    buttonText: {
+      type: String,
+      default: '添加'
+    }
+  },
   data() {
     return {
       ruleForm: {
@@ -114,10 +143,13 @@ export default {
       },
       uploading: false,
       showFileList: true,
-      showLineFileList: true
+      showLineFileList: true,
+      maskTitle: '添加'
     }
   },
   created() {
+    this.maskTitle = deepClone(this.buttonText)
+    if (this.formData) this.ruleForm = deepClone(this.formData)
     this.getList()
   },
   methods: {
@@ -219,21 +251,43 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const data = this.ruleForm
-          // debugger
-          // data.computerType = this.ruleForm.ct
-          add(data).then(response => {
-            if (response.status === 201) {
-              this.$message({
-                message: '添加刀模图成功！',
-                type: 'success'
-              })
-              // 重置表单
-              this.resetForm(formName)
+          debugger
+          if (this.buttonText === '添加') {
+            const data = this.ruleForm
+            data.recommendedStatus = {
+              id: 1
             }
-          }).catch(err => {
-            console.error(err)
-          })
+            // debugger
+            // data.computerType = this.ruleForm.ct
+            add(data).then(response => {
+              if (response.status === 201) {
+                this.$message({
+                  message: '添加刀模图成功！',
+                  type: 'success'
+                })
+                // 重置表单
+                this.resetForm(formName)
+              }
+            }).catch(err => {
+              console.error(err)
+            })
+          } else {
+            const data = this.ruleForm
+            // debugger
+            // data.computerType = this.ruleForm.ct
+            update(data).then(response => {
+              if (response.status === 200) {
+                this.$message({
+                  message: '编辑刀模图成功！',
+                  type: 'success'
+                })
+                // 重置表单
+                this.resetForm(formName)
+              }
+            }).catch(err => {
+              console.error(err)
+            })
+          }
         } else {
           return false
         }
