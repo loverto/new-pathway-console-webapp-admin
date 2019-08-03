@@ -104,7 +104,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="loadAll" />
 
     <!-- 新增编辑用户弹框 -->
     <el-dialog v-if="showMask" :visible.sync="showMask" :title="maskTitle" width="350px">
