@@ -1,5 +1,5 @@
 module.exports = {
-  title: '新通路后台管理系统',
+  title: '新通路自动排版后台管理系统',
 
   /**
    * @type {boolean} true | false

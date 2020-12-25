@@ -1,8 +1,8 @@
 <template>
   <div class="app-container product-wrapper">
-    <el-input v-model="currentSearch" placeholder="查找 字体" clearable class="width-50p" />
+    <el-input v-model="currentSearch" placeholder="查找 计算机" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-    <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus" @click="handleAdd(null)">添加字体名称</el-button>
+    <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus" @click="handleAdd(null)">添加计算机名称</el-button>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
       v-loading="listLoading"
@@ -18,10 +18,14 @@
         type="index"
         width="50"
       />
-
-      <el-table-column align="center" label="字体名称">
+      <el-table-column align="center" label="计算机分组">
         <template slot-scope="scope">
-          <span :style="{fontFamily: scope.row.value}">{{ scope.row.value }}</span>
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="计算机名称">
+        <template slot-scope="scope">
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
@@ -50,7 +54,7 @@
     >
       <add-page :form-data="curProd" :button-text="buttonText" />
     </el-dialog>
-    <!-- 上传字体包弹框 -->
+    <!-- 上传计算机包弹框 -->
     <el-dialog
       v-if="showFontMask"
       :visible.sync="showFontMask"
@@ -66,7 +70,7 @@
 </template>
 
 <script>
-import * as Api from '@/api/font-type'
+import * as Api from '@/api/computer'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
@@ -79,8 +83,8 @@ export default {
     return {
       list: [],
       total: 0,
-      title: '编辑字体名称',
-      fontTitle: '编辑字体名称',
+      title: '编辑计算机名称',
+      fontTitle: '编辑计算机名称',
       buttonFontText: '',
       buttonText: '',
       listLoading: true,
@@ -160,19 +164,19 @@ export default {
     handleEdit(row) {
       this.showMask = true
       this.curProd = row
-      this.title = '编辑字体名称'
+      this.title = '编辑计算机名称'
       this.buttonText = '编辑'
     },
     handleAdd(row) {
       this.showMask = true
       this.curProd = row
-      this.title = '添加字体名称'
+      this.title = '添加计算机名称'
       this.buttonText = '添加'
     },
     handleAddFont(row) {
       this.showFontMask = true
       this.curProd = row
-      this.fontTitle = '添加字体包'
+      this.fontTitle = '添加计算机包'
       this.buttonFontText = '添加'
     },
     handleClose() {

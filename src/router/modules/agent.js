@@ -9,18 +9,50 @@ const agentRouter = {
   component: Layout,
   redirect: '/agents/index',
   meta: {
-    title: '关于用户',
+    title: '用户软件授权',
     icon: 'user',
     roles
   },
   children: [
     {
       path: 'index',
-      component: () => import('@/views/agentMg/index'),
-      name: 'AgentList',
+      component: () => import('@/views/userinfoMg/index'),
+      name: 'UserinfoList',
       meta: {
         title: '用户管理',
         icon: 'peoples',
+        roles
+      }
+    },
+    {
+      path: '/userinfo/add',
+      component: () => import('@/views/userinfoMg/add'),
+      name: 'UserinfoAdd',
+      hidden: true,
+      meta: {
+        title: '用户新增',
+        icon: 'peoples',
+        roles
+      }
+    },
+    {
+      path: '/authorization/index',
+      component: () => import('@/views/authorizationMg/index'),
+      name: 'ComputerTypesList',
+      meta: {
+        title: '授权管理',
+        icon: 'list',
+        roles
+      }
+    },
+    {
+      path: '/authorization/add',
+      hidden: true,
+      component: () => import('@/views/authorizationMg/add'),
+      name: 'ComputerTypesAdd',
+      meta: {
+        title: '授权新增',
+        icon: 'form',
         roles
       }
     },

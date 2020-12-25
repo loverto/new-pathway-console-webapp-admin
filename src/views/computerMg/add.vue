@@ -2,12 +2,8 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="品牌:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="品牌代码值" class="width-50p" />
-        </el-form-item>
-
-        <el-form-item label="品牌:" prop="value">
-          <el-input v-model="ruleForm.value" placeholder="品牌显示值..." class="width-50p" />
+        <el-form-item label="计算机名称:" prop="value">
+          <el-input v-model="ruleForm.name" placeholder="计算机名称显示值..." class="width-50p" />
         </el-form-item>
 
         <el-form-item>
@@ -21,8 +17,9 @@
 </template>
 
 <script>
-import { saveOrUpdate } from '@/api/computer-type'
+import { saveOrUpdate } from '@/api/computer'
 import { deepClone } from '@/utils'
+import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 
 export default {
   name: 'AddOrEditProductPage',
@@ -39,16 +36,11 @@ export default {
   data() {
     return {
       ruleForm: {
-        // 品牌代码值
-        name: '',
-        // 品牌显示值
-        value: ''
+        // 计算机显示值
+        name: ''
       },
       rules: {
         name: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        value: [
           { required: true, message: '必填项', trigger: 'blur' }
         ]
       }
@@ -58,6 +50,47 @@ export default {
     if (this.formData) this.ruleForm = deepClone(this.formData)
   },
   methods: {
+    beforeUpload(file) {
+      if (!file) return false
+
+      const ext = /\.[^\.]+$/.exec(file.name)[0]
+      debugger
+      if (!/\.(ttf|woff)/.test(ext)) {
+        this.showFileList = false
+        this.$message({
+          message: '只能上传ttf/woff格式的文件哦~',
+          type: 'warning'
+        })
+        return false
+      }
+    },
+    /**
+     * 新版上传方法
+     */
+    uploadSectionFile(data) {
+      this.uploading = true
+      uploader('font', data.file).then(response => {
+        this.uploading = false
+        const { bucketName, fileName } = response
+        this.ruleForm.name = `/${bucketName}/${fileName}`
+      })
+        .catch(err => {
+          this.uploading = false
+          console.error(err)
+        })
+    },
+    /**
+     * 删除图片
+     */
+    removeImage(file) {
+      const url = this.ruleForm.name
+      const fileName = url.split('/')[2]
+      removeRemoteImage('font', fileName).then(() => {
+        console.log(`Remove font '${fileName}' successed!`)
+        this.ruleForm.name = ''
+        this.showFileList = false
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -71,7 +104,7 @@ export default {
           saveOrUpdate(this.ruleForm, method).then(response => {
             if (response.status === 201 || response.status === 200) {
               this.$message({
-                message: `${this.buttonText}产品成功！`,
+                message: `${this.buttonText}计算机成功！`,
                 type: 'success'
               })
 

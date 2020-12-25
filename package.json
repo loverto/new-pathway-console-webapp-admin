@@ -1,8 +1,8 @@
 {
-  "name": "new-pathway-admin",
-  "version": "1.0.3",
+  "name": "new-pathway-console-admin",
+  "version": "1.0.0",
   "description": "A project build with vue.js",
-  "author": "Gongph",
+  "author": "Yinlf",
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",

@@ -1,9 +1,9 @@
 <template>
   <div class="app-container product-wrapper">
-    <el-input v-model="currentSearch" placeholder="查找 品牌" clearable class="width-50p" />
+    <el-input v-model="currentSearch" placeholder="查找 用户" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-    <router-link to="/computer-type/add">
-      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加品牌</el-button>
+    <router-link to="/userinfo/add">
+      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加用户</el-button>
     </router-link>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table
@@ -21,9 +21,15 @@
         width="50"
       />
 
-      <el-table-column align="center" label="品牌">
+      <el-table-column align="center" label="用户">
         <template slot-scope="scope">
-          <span>{{ scope.row.value }}</span>
+          <span @click="goComputer(scope.row)">{{ scope.row.username }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="用户编码">
+        <template slot-scope="scope">
+          <span @click="goComputer(scope.row)">{{ scope.row.code }}</span>
         </template>
       </el-table-column>
 
@@ -33,19 +39,20 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="100" fixed="right">
+      <el-table-column align="center" label="操作" width="200" fixed="right">
         <template slot-scope="scope">
-          <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="primary" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <!-- 编辑产品弹框 -->
+    <!-- 编辑用户弹框 -->
     <el-dialog
       v-if="showMask"
       :visible.sync="showMask"
-      title="编辑品牌"
+      title="编辑用户"
       top="5vh"
       class="product-edit__dialog"
       @close="handleClose"
@@ -57,12 +64,12 @@
 </template>
 
 <script>
-import * as Api from '@/api/computer-type'
+import * as Api from '@/api/userinfo'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
 export default {
-  name: 'ProductList',
+  name: 'UserinfoList',
   components: { AddPage, Pagination },
   data() {
     return {
@@ -131,6 +138,12 @@ export default {
       this.currentSearch = query
       this.loadAll()
     },
+    goComputer(row) {
+      this.$router.push({
+        name: 'ComputerList',
+        query: { groupId: row.id }
+      })
+    },
     handleSizeChange(val) {
       this.listQuery.limit = val
       this.getList()
@@ -142,6 +155,19 @@ export default {
     handleEdit(row) {
       this.showMask = true
       this.curProd = row
+    },
+    handleDelete(row) {
+      this.$confirm('您此操作会很严重，将会删除当前选中授权，请再次确认！！！', '重要提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        Api.deleteById(row.id).then(response => {
+          if (response.status === 204) {
+            this.getList()
+          }
+        })
+      })
     },
     handleClose() {
       this.curProd = null

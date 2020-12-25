@@ -95,7 +95,7 @@
 <script>
 import { deepClone } from '@/utils'
 import { add, update } from '@/api/die-pattern'
-import { getList } from '@/api/computer-type'
+import { getList } from '@/api/computer-groups'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
 
 export default {

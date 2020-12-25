@@ -7,12 +7,8 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* 业务路由 */
-import productRouter from './modules/computer-type'
-import diePatternRouter from './modules/die-pattern'
+import systemFeature from './modules/computer-group'
 import agentRouter from './modules/agent'
-// import auditRouter from './modules/audit'
-// import picRouter from './modules/pic'
-import custom from './modules/custom'
 import dataRouter from './modules/data'
 // import rateRouter from './modules/rate'
 
@@ -87,10 +83,8 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
-  productRouter,
-  diePatternRouter,
+  systemFeature,
   agentRouter,
-  custom,
   dataRouter,
   { path: '*', redirect: '/404', hidden: true }
 ]

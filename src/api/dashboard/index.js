@@ -9,7 +9,7 @@ import request from '@/utils/request'
  */
 export function getList() {
   return request({
-    url: '/api/users',
+    url: '/api/userinfos',
     method: 'get'
   })
 }
