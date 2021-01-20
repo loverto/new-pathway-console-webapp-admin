@@ -5,7 +5,7 @@
 import request from '@/utils/request'
 
 /**
- * 获取品牌列表
+ * 获取计算机分组列表
  */
 export function getList(query) {
   return request({
@@ -16,7 +16,7 @@ export function getList(query) {
 }
 
 /**
- * 新增或更新品牌
+ * 新增或更新计算机分组
  */
 
 export function saveOrUpdate(data, method = 'post') {
@@ -28,7 +28,7 @@ export function saveOrUpdate(data, method = 'post') {
 }
 
 /**
- * 获取审核列表
+ * 搜索计算机分组
  */
 export function getSearchList(query) {
   return request({
@@ -39,7 +39,17 @@ export function getSearchList(query) {
 }
 
 /**
- * 更新审核信息
+ * 根据分组ID获取计算机分组及计算机信息
+ */
+export function getById(id) {
+  return request({
+    url: `/api/computer-groups/${id}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 更新计算机分组信息
  * @param data
  */
 export function updateAudits(data) {

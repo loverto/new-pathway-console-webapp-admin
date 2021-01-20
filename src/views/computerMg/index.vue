@@ -20,12 +20,17 @@
       />
       <el-table-column align="center" label="计算机分组">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <span>{{ scope.row.groupName }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="计算机名称">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="计算机备注名称">
+        <template slot-scope="scope">
+          <span>{{ scope.row.code }}</span>
         </template>
       </el-table-column>
 
@@ -70,18 +75,22 @@
 </template>
 
 <script>
+import * as GroupApi from '@/api/computer-groups'
 import * as Api from '@/api/computer'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
 import UploadFont from './edit.vue'
 import config from '@/utils/config.js'
+import _ from 'lodash'
+
 export default {
   name: 'FontList',
   components: { AddPage, Pagination, UploadFont },
   data() {
     return {
       list: [],
+      groupComputer: [],
       total: 0,
       title: '编辑计算机名称',
       fontTitle: '编辑计算机名称',
@@ -118,9 +127,53 @@ export default {
         size: this.listQuery.pageSize,
         sort: 'lastModifiedDate,desc'
       }
-      Api.getList(data).then(response => {
-        this.list = response.data
+      GroupApi.getList(data).then(response => {
         this.total = Number(response.headers['x-total-count']) || 0
+        return new Promise((resolve, reject) => {
+          resolve(response)
+        })
+      }).then(response => {
+        const computers = []
+        response.data.forEach((e) => {
+          computers.push(GroupApi.getById(e.id))
+        })
+        return Promise.all(computers)
+      }).then(response => {
+        // 重置数组数据
+        this.groupComputer = []
+        console.log(response)
+        response.forEach((re) => {
+          re.data.computers.forEach((c) => {
+            c.groupName = re.data.name
+            this.groupComputer.push(c)
+          })
+        })
+        return Api.getList(data)
+      }).then(response => {
+        let computers = []
+        // const minus = response.data.filter(x => !this.groupComputer.has(x))
+        if (!_.isEmpty(this.groupComputer)) {
+          console.log('groupComputer:' + JSON.stringify(this.groupComputer))
+          // 排除掉有分组名称的
+          const minus = _.differenceBy(response.data, this.groupComputer, 'id')
+          console.log('minius' + JSON.stringify(minus))
+          // 处理未分组名称
+          minus.forEach((c) => {
+            c.groupName = '未分组'
+            computers.push(c)
+          })
+          // 组合未分组和已分组
+          // computers.push(this.groupComputer)
+          computers = _.concat(this.groupComputer, computers)
+        } else {
+          console.log('response.data:' + JSON.stringify(response.data))
+          response.data.forEach((c) => {
+            c.groupName = '未分组'
+            computers.push(c)
+          })
+        }
+
+        this.list = computers
         this.listLoading = false
       })
     },

@@ -35,11 +35,19 @@
 
       <el-table-column align="center" label="操作" width="100" fixed="right">
         <template slot-scope="scope">
-          <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">
+            编辑
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
 
     <!-- 编辑分组弹框 -->
     <el-dialog
@@ -50,7 +58,7 @@
       class="product-edit__dialog"
       @close="handleClose"
     >
-      <add-page :form-data="curProd" button-text="编辑" />
+      <add-page :form-data="curProd" :list1="curComputerList" :list2="computerList" button-text="编辑" />
     </el-dialog>
 
   </div>
@@ -58,15 +66,20 @@
 
 <script>
 import * as Api from '@/api/computer-groups'
+import * as ComputeApi from '@/api/computer'
 import { types } from '@/utils/role.js'
 import Pagination from '@/components/Pagination'
 import AddPage from './add.vue'
+import _ from 'lodash'
+
 export default {
   name: 'ProductList',
   components: { AddPage, Pagination },
   data() {
     return {
       list: [],
+      computerList: [],
+      hasGroupComputerList: [],
       currentSearch: '',
       total: 0,
       listLoading: true,
@@ -75,7 +88,8 @@ export default {
         pageSize: 10
       },
       showMask: false,
-      curProd: null
+      curProd: null,
+      curComputerList: null
     }
   },
   created() {
@@ -97,9 +111,40 @@ export default {
         sort: 'lastModifiedDate,desc'
       }
       Api.getList(data).then(response => {
-        this.list = response.data
+        const groups = []
+        response.data.forEach((e) => {
+          groups.push(Api.getById(e.id))
+        })
         this.total = Number(response.headers['x-total-count']) || 0
+        return Promise.all(groups)
+      }).then(response => {
+        const tempGroups = []
+        let tempGroupsComputer = []
+        response.forEach(re => {
+          console.log('分组电脑返回值数组: ' + JSON.stringify(re.data.computers))
+          tempGroups.push(re.data)
+          // eslint-disable-next-line no-const-assign
+          tempGroupsComputer = _.concat(tempGroupsComputer, re.data.computers)
+          console.log('有分组的计算机:: ' + JSON.stringify(tempGroupsComputer))
+        })
+        console.log('有分组的计算机2:: ' + JSON.stringify(tempGroups))
+        console.log('有分组的计算机3:: ' + JSON.stringify(tempGroupsComputer))
+        this.hasGroupComputerList = tempGroupsComputer
+        console.log('有分组的计算机4:: ' + JSON.stringify(this.hasGroupComputerList))
+        this.list = tempGroups
         this.listLoading = false
+        return ComputeApi.getList()
+      }).then(response => {
+        console.log('计算机数据:' + JSON.stringify(response.data))
+        console.log('分组数据:' + JSON.stringify(this.hasGroupComputerList))
+        this.computerList = _.differenceBy(response.data, this.hasGroupComputerList, 'id')
+      })
+    },
+    getComputer() {
+      ComputeApi.getList().then(response => {
+        console.log('计算机数据:' + JSON.stringify(response.data))
+        console.log('分组数据:' + JSON.stringify(this.hasGroupComputerList))
+        this.computerList = _.differenceBy(response.data, this.hasGroupComputerList, 'id')
       })
     },
     clear() {
@@ -115,13 +160,37 @@ export default {
           page: this.listQuery.page - 1,
           size: this.listQuery.pageSize
         }).then(response => {
-          this.list = response.data
+          const groups = []
+          response.data.forEach((e) => {
+            groups.push(Api.getById(e.id))
+          })
           this.total = Number(response.headers['x-total-count']) || 0
+          return Promise.all(groups)
+        }).then(response => {
+          const tempGroups = []
+          let tempGroupsComputer = []
+          response.forEach(re => {
+            console.log('分组电脑返回值数组: ' + JSON.stringify(re.data.computers))
+            tempGroups.push(re.data)
+            // eslint-disable-next-line no-const-assign
+            tempGroupsComputer = _.concat(tempGroupsComputer, re.data.computers)
+            console.log('有分组的计算机:: ' + JSON.stringify(tempGroupsComputer))
+          })
+          console.log('有分组的计算机3:: ' + JSON.stringify(tempGroupsComputer))
+          this.hasGroupComputerList = tempGroupsComputer
+          console.log('有分组的计算机4:: ' + JSON.stringify(this.hasGroupComputerList))
+          this.list = tempGroups
           this.listLoading = false
+          return ComputeApi.getList()
+        }).then(response => {
+          console.log('计算机数据:' + JSON.stringify(response.data))
+          console.log('分组数据:' + JSON.stringify(this.hasGroupComputerList))
+          this.computerList = _.differenceBy(response.data, this.hasGroupComputerList, 'id')
         })
         return
       }
       this.getList()
+      // this.getComputer()
     },
     search(query) {
       if (!query) {
@@ -148,6 +217,7 @@ export default {
     handleEdit(row) {
       this.showMask = true
       this.curProd = row
+      this.curComputerList = row.computers
     },
     handleClose() {
       this.curProd = null
@@ -160,7 +230,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .add-btn {
-    margin-bottom: 20px;
-  }
+.add-btn {
+  margin-bottom: 20px;
+}
 </style>

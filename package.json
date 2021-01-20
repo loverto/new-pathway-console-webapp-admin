@@ -1,6 +1,6 @@
 {
   "name": "new-pathway-console-admin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A project build with vue.js",
   "author": "Yinlf",
   "license": "MIT",
@@ -58,6 +58,7 @@
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",
     "jszip": "3.2.1",
+    "lodash": "^4.17.20",
     "minio": "^7.0.5",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

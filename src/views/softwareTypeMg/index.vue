@@ -2,8 +2,8 @@
   <div class="app-container product-wrapper">
     <el-input v-model="currentSearch" placeholder="查找 授权" clearable class="width-50p" />
     <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-    <router-link to="/software-type/add">
-      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加授权</el-button>
+    <router-link to="/software-types/add">
+      <el-button type="primary" class="add-btn" size="small" icon="el-icon-plus">添加软件类型</el-button>
     </router-link>
     <el-button type="text" icon="el-icon-refresh" @click="getList">刷新</el-button>
     <el-table

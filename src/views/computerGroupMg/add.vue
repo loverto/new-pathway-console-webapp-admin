@@ -3,8 +3,9 @@
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="分组:" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="分组代码值" class="width-50p" />
+          <el-input v-model="ruleForm.name" placeholder="分组名称" class="width-50p" />
         </el-form-item>
+        <dnd-list v-if="buttonText == '编辑'" :list1title="ruleForm.name" :list1="list1" :list2="list2" list2title="未分组计算机" />
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">立即{{ buttonText }}</el-button>
@@ -17,12 +18,24 @@
 </template>
 
 <script>
+
+import DndList from '@/components/DndList'
 import { saveOrUpdate } from '@/api/computer-groups'
 import { deepClone } from '@/utils'
+import _ from 'lodash'
 
 export default {
   name: 'AddOrEditProductPage',
+  components: { DndList },
   props: {
+    list1: {
+      type: Array,
+      default: null
+    },
+    list2: {
+      type: Array,
+      default: null
+    },
     formData: {
       type: Object,
       default: null
@@ -46,6 +59,8 @@ export default {
     }
   },
   created() {
+    console.log('分组数据:' + JSON.stringify(this.list1))
+    console.log('未分组数据:' + JSON.stringify(this.list2))
     if (this.formData) this.ruleForm = deepClone(this.formData)
   },
   methods: {
@@ -57,6 +72,7 @@ export default {
           if (this.ruleForm.id || this.buttonText === '编辑') {
             method = 'put'
           }
+          this.ruleForm.computers = this.list1
 
           // 新增或保存操作
           saveOrUpdate(this.ruleForm, method).then(response => {
@@ -112,17 +128,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  // .width-50p {
-  //   width: 50%;
-  // }
-  // .form-wrapper {
-  //   width: 50%;
-  // }
-  .line {
-    text-align: center;
-  }
+// .width-50p {
+//   width: 50%;
+// }
+// .form-wrapper {
+//   width: 50%;
+// }
+.line {
+  text-align: center;
+}
 
-  .range-input {
-    //
-  }
+.range-input {
+  //
+}
 </style>

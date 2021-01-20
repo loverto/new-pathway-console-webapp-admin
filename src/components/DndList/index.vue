@@ -5,7 +5,7 @@
       <draggable :set-data="setData" :list="list1" group="article" class="dragArea">
         <div v-for="element in list1" :key="element.id" class="list-complete-item">
           <div class="list-complete-item-handle">
-            {{ element.id }}[{{ element.author }}] {{ element.title }}
+            {{ element.id }}[{{ element.name }}] {{ element.code }}
           </div>
           <div style="position:absolute;right:0px;">
             <span style="float: right ;margin-top: -20px;margin-right:5px;" @click="deleteEle(element)">
@@ -20,7 +20,7 @@
       <draggable :list="list2" group="article" class="dragArea">
         <div v-for="element in list2" :key="element.id" class="list-complete-item">
           <div class="list-complete-item-handle2" @click="pushEle(element)">
-            {{ element.id }} [{{ element.author }}] {{ element.title }}
+            {{ element.id }} [{{ element.name }}] {{ element.code }}
           </div>
         </div>
       </draggable>
@@ -94,7 +94,21 @@ export default {
       }
     },
     pushEle(ele) {
-      this.list1.push(ele)
+      for (const item of this.list2) {
+        if (item.id === ele.id) {
+          const index = this.list2.indexOf(item)
+          this.list2.splice(index, 1)
+          break
+        }
+      }
+      if (this.isNotInList1(ele)) {
+        this.list1.push(ele)
+      }
+    },
+    setData(dataTransfer) {
+      // to avoid Firefox bug
+      // Detail see : https://github.com/RubaXa/Sortable/issues/1012
+      dataTransfer.setData('Text', '')
     }
   }
 }

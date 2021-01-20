@@ -3,7 +3,7 @@
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
         <el-form-item label="用户:" prop="username">
-          <el-input v-model="ruleForm.username" placeholder="用户代" class="width-50p" />
+          <el-input v-model="ruleForm.username" placeholder="用户名称" class="width-50p" />
         </el-form-item>
 
         <el-form-item>

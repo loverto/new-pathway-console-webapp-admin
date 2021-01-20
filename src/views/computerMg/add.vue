@@ -2,8 +2,8 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="计算机名称:" prop="value">
-          <el-input v-model="ruleForm.name" placeholder="计算机名称显示值..." class="width-50p" />
+        <el-form-item label="计算机备注名称:" prop="value">
+          <el-input v-model="ruleForm.code" placeholder="计算机备注名称..." class="width-50p" />
         </el-form-item>
 
         <el-form-item>
@@ -20,6 +20,7 @@
 import { saveOrUpdate } from '@/api/computer'
 import { deepClone } from '@/utils'
 import { uploader, removeRemoteImage } from '@/utils/file-uploader.js'
+import _ from 'lodash'
 
 export default {
   name: 'AddOrEditProductPage',
