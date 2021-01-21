@@ -2,8 +2,12 @@
   <div class="app-container product-wrapper">
     <div class="form-wrapper">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
-        <el-form-item label="用户:" prop="username">
+        <el-form-item label="用户名称:" prop="username">
           <el-input v-model="ruleForm.username" placeholder="用户名称" class="width-50p" />
+        </el-form-item>
+
+        <el-form-item label="用户编码:" prop="username">
+          <el-input v-model="ruleForm.code" placeholder="用户编码" class="width-50p" />
         </el-form-item>
 
         <el-form-item>

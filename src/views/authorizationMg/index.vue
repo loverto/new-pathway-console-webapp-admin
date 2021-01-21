@@ -2,7 +2,7 @@
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
       <el-form-item label="授权:">
-        <el-input v-model="currentSearch" placeholder="查找 授权" clearable />
+        <el-input v-model="currentSearch" placeholder="<按软件信息>查找 授权" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
@@ -17,13 +17,13 @@
         width="50"
       />
 
-      <el-table-column align="center" label="计算机" width="220">
+      <el-table-column align="center" label="分组>计算机名>计算机备注" width="220">
         <template slot-scope="scope">
           <el-select v-model="scope.row.computer" value-key="id" class="width-192" placeholder="请选择">
             <el-option
               v-for="item in computerOptions"
               :key="item.id"
-              :label="item.name"
+              :label="item.groupName + '>' + item.name + '>' +item.code"
               :value="item"
             />
           </el-select>
@@ -152,8 +152,13 @@
 
 <script>
 import * as Api from '@/api/authorization'
+import * as SoftwareApi from '@/api/software'
+import * as GroupApi from '@/api/computer-groups'
+import * as ComputeApi from '@/api/computer'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
+import _ from 'lodash'
+import qs from 'qs'
 export default {
   name: 'AuthorizationList',
   components: { Pagination },
@@ -231,6 +236,7 @@ export default {
       currentSearch: '',
       activatedOptions: [{ id: true, value: '启用' }, { id: false, value: '禁用' }],
       computerOptions: [],
+      groupComputer: [],
       softwareOptions: [],
       userinfoOptions: [],
       roleOptions: [],
@@ -282,9 +288,9 @@ export default {
         data.forEach(item => {
           item.currentDate = []
           item.currentDate.push(item.startDate, item.endDate)
-          this.list = data
-          this.total = Number(response1.headers['x-total-count']) || 0
         })
+        this.list = data
+        this.total = Number(response1.headers['x-total-count']) || 0
         this.listLoading = false
       })
     },
@@ -299,9 +305,60 @@ export default {
       })
     },
     getComputerList() {
-      Api.getComputerList().then(response => {
-        this.computerOptions = response.data
+      GroupApi.getList().then(response => {
+        return new Promise((resolve, reject) => {
+          resolve(response)
+        })
+      }).then(response => {
+        const computers = []
+        response.data.forEach((e) => {
+          computers.push(GroupApi.getById(e.id))
+        })
+        return Promise.all(computers)
+      }).then(response => {
+        // 重置数组数据
+        this.groupComputer = []
+        console.log(response)
+        response.forEach((re) => {
+          re.data.computers.forEach((c) => {
+            c.groupName = re.data.name
+            this.groupComputer.push(c)
+          })
+        })
+        return ComputeApi.getList()
+      }).then(response => {
+        let computers = []
+        // const minus = response.data.filter(x => !this.groupComputer.has(x))
+        if (!_.isEmpty(this.groupComputer)) {
+          console.log('groupComputer:' + JSON.stringify(this.groupComputer))
+          // 排除掉有分组名称的
+          const minus = _.differenceBy(response.data, this.groupComputer, 'id')
+          console.log('minius' + JSON.stringify(minus))
+          // 处理未分组名称
+          minus.forEach((c) => {
+            c.groupName = '未分组'
+            computers.push(c)
+          })
+          // 组合未分组和已分组
+          // computers.push(this.groupComputer)
+          computers = _.concat(this.groupComputer, computers)
+        } else {
+          console.log('response.data:' + JSON.stringify(response.data))
+          response.data.forEach((c) => {
+            c.groupName = '未分组'
+            computers.push(c)
+          })
+        }
+        this.computerOptions = computers
       })
+      //   .then(response => {
+      //   console.log('计算机数据:' + JSON.stringify(response.data))
+      //   console.log('分组数据:' + JSON.stringify(this.hasGroupComputerList))
+      //   this.computerList = _.differenceBy(response.data, this.hasGroupComputerList, 'id')
+      // })
+      // Api.getGroupComputerList().then(response => {
+      //   this.computerOptions = response.data
+      // })
     },
     getComputerSelectedList(query) {
       this.listLoading = true
@@ -373,11 +430,23 @@ export default {
     loadAll() {
       if (this.currentSearch) {
         this.listLoading = true
-        Api.getSearchList({
+        SoftwareApi.getSearchList({
           query: this.currentSearch,
           page: this.listQuery.page - 1,
           size: this.listQuery.pageSize,
           sort: 'lastModifiedDate,desc'
+        }).then(response => {
+          const data = response.data
+          const searchSoftwareIds = []
+          data.forEach(software => {
+            searchSoftwareIds.push(software.id)
+          })
+          console.log(searchSoftwareIds)
+          const tempParams = { softwareId: { in: searchSoftwareIds }}
+          const params = qs.stringify(tempParams, { arrayFormat: 'repeat', allowDots: true })
+          console.log('temp' + JSON.stringify(tempParams))
+          console.log('param' + params)
+          return Api.getListByFilter(tempParams)
         }).then(response => {
           const data = response.data
           data.forEach(item => {

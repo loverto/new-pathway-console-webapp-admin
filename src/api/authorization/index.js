@@ -3,6 +3,7 @@
  */
 
 import request from '@/utils/request'
+import qs from 'qs'
 
 /**
  * 获取授权列表
@@ -12,6 +13,17 @@ export function getList(query) {
     url: '/api/authorization-infos',
     method: 'get',
     params: query
+  })
+}
+/**
+ * 获取授权列表
+ */
+export function getListByFilter(query) {
+  return request({
+    url: '/api/authorization-infos',
+    method: 'get',
+    params: query,
+    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
   })
 }
 
@@ -88,6 +100,17 @@ export function getSoftwareList(query) {
 export function getComputerList(query) {
   return request({
     url: '/api/computers',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
+ * 获取计算机列表
+ */
+export function getGroupComputerList(query) {
+  return request({
+    url: '/api/computer-groups',
     method: 'get',
     params: query
   })
