@@ -5,7 +5,7 @@
         <el-form-item label="分组:" prop="name">
           <el-input v-model="ruleForm.name" placeholder="分组名称" class="width-50p" />
         </el-form-item>
-        <dnd-list v-if="buttonText == '编辑'" :list1title="ruleForm.name" list2title="未分组计算机" :list1="list1" :list2="list2" />
+        <dnd-list v-if="buttonText == '编辑'" :list1Title="ruleForm.name" list2Title="未分组计算机" :list1="list1" :list2="list2" />
 
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')">立即{{ buttonText }}</el-button>
