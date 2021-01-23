@@ -112,10 +112,14 @@ export default {
       }
       Api.getList(data).then(response => {
         const groups = []
+        console.log(response.headers)
+        const count = response.headers['x-total-count']
+        console.log(count)
+        this.total = Number(count) || 0
         response.data.forEach((e) => {
           groups.push(Api.getById(e.id))
         })
-        this.total = Number(response.headers['x-total-count']) || 0
+        console.log('总数:' + this.total)
         return Promise.all(groups)
       }).then(response => {
         const tempGroups = []

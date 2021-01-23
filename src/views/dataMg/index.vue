@@ -12,8 +12,8 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         />
-        <!--        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>-->
-        <el-select v-model="currentComputer" placeholder="选择计算机" @change="changeComputer()">
+        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
+        <el-select v-model="currentComputer" value-key="id" placeholder="选择计算机" @change="changeComputer()">
           <el-option
             v-for="item in computerOptions"
             :key="item.id"
@@ -21,14 +21,14 @@
             :value="item"
           />
         </el-select>
-        <!--        <el-select v-model="currentGroup" placeholder="选择分组" @change="changeGroup()">-->
-        <!--          <el-option-->
-        <!--            v-for="item in groupOptions"-->
-        <!--            :key="item.id"-->
-        <!--            :label="item.name"-->
-        <!--            :value="item"-->
-        <!--          />-->
-        <!--        </el-select>-->
+        <el-select v-model="currentGroup" value-key="id" placeholder="选择分组" @change="changeGroup()">
+          <el-option
+            v-for="item in groupOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          />
+        </el-select>
         <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
       </el-form-item>
     </el-form>
@@ -158,7 +158,7 @@ export default {
   created() {
     this.currentSearch.push(this.begin)
     this.currentSearch.push(this.end)
-    // this.getList()
+    this.getList()
     this.getComputersOptionList()
     this.getGroupOptionList()
   },
@@ -174,10 +174,8 @@ export default {
       this.computerIds = []
       this.currentComputer = null
       console.log(this.currentGroup)
-      this.currentGroup.forEach(g => {
-        g.computers.forEach(c => {
-          this.computerIds.push(c.id)
-        })
+      this.currentGroup.computers.forEach(c => {
+        this.computerIds.push(c.id)
       })
       this.getList()
     },
@@ -208,16 +206,24 @@ export default {
             } else {
               text = '所有计算机'
             }
+            const computerGroupObject = _.groupBy(this.allbjblist, 'computer.code')
+            const keys = Object.keys(computerGroupObject)
+            console.log(computerGroupObject)
+            console.log(keys)
             const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
             this.filename = s + text + '运行明细表'
-            const multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
-            const bjbdata = this.formatJson(filterVal, allBjblist)
+            let multiHeader = []
             const datas = []
             const headers = []
             const sheetnames = []
-            headers.push(tHeader)
-            datas.push(bjbdata)
-            sheetnames.push(text)
+            keys.forEach(k => {
+              const computerGroupObjectElement = computerGroupObject[k]
+              const bjbdata = this.formatJson(filterVal, computerGroupObjectElement)
+              datas.push(bjbdata)
+              multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + k]]
+              sheetnames.push(computerGroupObjectElement.computer.name)
+              headers.push(tHeader)
+            })
             excel.export_json_to_excel_sheet({
               headers: headers,
               datas: datas,
