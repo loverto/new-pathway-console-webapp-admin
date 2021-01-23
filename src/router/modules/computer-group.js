@@ -59,6 +59,7 @@ const systemFeature = {
     {
       path: '/software-types/index',
       component: () => import('@/views/softwareTypeMg/index'),
+      hidden: true,
       name: 'SoftwareTypeList',
       meta: {
         title: '软件类型管理',
