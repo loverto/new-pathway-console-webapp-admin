@@ -20,7 +20,7 @@ const dataRouter = {
       component: () => import('@/views/dataMg/index'),
       name: 'WorkList',
       meta: {
-        title: '作品明细',
+        title: '运行明细',
         icon: 'list',
         roles
       }

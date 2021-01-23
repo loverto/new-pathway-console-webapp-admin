@@ -12,132 +12,72 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         />
-        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentUser" placeholder="选择用户" @change="changeUser()">
+        <!--        <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>-->
+        <el-select v-model="currentComputer" placeholder="选择计算机" @change="changeComputer()">
           <el-option
-            v-for="item in usersOptions"
-            :key="item.login"
-            :label="item.login"
-            :value="item.login"
+            v-for="item in computerOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
           />
         </el-select>
+        <!--        <el-select v-model="currentGroup" placeholder="选择分组" @change="changeGroup()">-->
+        <!--          <el-option-->
+        <!--            v-for="item in groupOptions"-->
+        <!--            :key="item.id"-->
+        <!--            :label="item.name"-->
+        <!--            :value="item"-->
+        <!--          />-->
+        <!--        </el-select>-->
         <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
       </el-form-item>
     </el-form>
 
     <el-tabs type="border-card">
-      <el-tab-pane label="笔记本">
-        <el-table v-loading="listLoading" :data="bjblist" border fit highlight-current-row style="width: 100%">
+      <el-tab-pane label="工作情况">
+        <el-table v-loading="listLoading" :data="authorizationlist" border fit highlight-current-row style="width: 100%">
           <el-table-column
             align="center"
             type="index"
             width="50"
           />
 
-          <el-table-column align="center" label="定制编号">
+          <el-table-column align="center" label="计算机名称">
             <template slot-scope="scope">
-              <span>{{ scope.row.customNumber }}</span>
+              <span>{{ scope.row.computer.name }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="定制型号">
+          <el-table-column align="center" label="计算机备注">
             <template slot-scope="scope">
-              <span>{{ scope.row.diePattern.diePatternType }}</span>
+              <span>{{ scope.row.computer.code }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="定制类型">
+          <el-table-column align="center" label="用户名称">
             <template slot-scope="scope">
-              <span>{{ scope.row.modelType.value }}</span>
+              <span>{{ scope.row.userinfo.username }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="收件人姓名">
+          <el-table-column align="center" label="软件名称">
             <template slot-scope="scope">
-              <span>{{ scope.row.theRecipientName }}</span>
+              <span>{{ scope.row.software.name }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="客户ID">
+          <el-table-column align="center" label="运行时间">
             <template slot-scope="scope">
-              <span>{{ scope.row.taobaoNickname }}</span>
+              <span>{{ scope.row.runTime }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="定制状态">
-            <template slot-scope="scope">
-              <span>{{ scope.row.finishedCondition.value }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="定制日期">
+          <el-table-column align="center" label="运行日期">
             <template slot-scope="scope">
               <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="代理用户">
-            <template slot-scope="scope">
-              <span>{{ scope.row.user.login }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-tab-pane>
-      <el-tab-pane label="鼠标垫">
-        <el-table v-loading="listLoading" :data="sjblist" border fit highlight-current-row style="width: 100%">
-          <el-table-column
-            align="center"
-            type="index"
-            width="50"
-          />
-
-          <el-table-column align="center" label="定制编号">
-            <template slot-scope="scope">
-              <span>{{ scope.row.customNumber }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="定制型号">
-            <template slot-scope="scope">
-              <span>{{ scope.row.diePattern.diePatternType }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="定制类型">
-            <template slot-scope="scope">
-              <span>{{ scope.row.modelType.value }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="收件人姓名">
-            <template slot-scope="scope">
-              <span>{{ scope.row.theRecipientName }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="客户ID">
-            <template slot-scope="scope">
-              <span>{{ scope.row.taobaoNickname }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="定制状态">
-            <template slot-scope="scope">
-              <span>{{ scope.row.finishedCondition.value }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="定制日期">
-            <template slot-scope="scope">
-              <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center" label="代理用户">
-            <template slot-scope="scope">
-              <span>{{ scope.row.user.login }}</span>
-            </template>
-          </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -148,11 +88,15 @@
 </template>
 
 <script>
-import * as Api from '@/api/custom-template'
+import * as Api from '@/api/loginfos'
+import * as SoftwareApi from '@/api/software'
+import * as GroupApi from '@/api/computer-groups'
+import * as ComputeApi from '@/api/computer'
 import * as UserApi from '@/api/agent'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
+import _ from 'lodash'
 
 export default {
   name: 'DatatList',
@@ -188,11 +132,13 @@ export default {
       },
       currentSearch: [],
       list: [],
-      bjblist: [],
+      computerIds: [],
+      authorizationlist: [],
       sjblist: [],
       allbjblist: [],
       allsjblist: [],
-      usersOptions: [],
+      computerOptions: [],
+      groupOptions: [],
       total: 0,
       listLoading: true,
       listQuery: {
@@ -201,7 +147,8 @@ export default {
       },
       begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 30)),
       downloadLoading: false,
-      currentUser: '',
+      currentComputer: '',
+      currentGroup: '',
       filename: '',
       autoWidth: true,
       bookType: 'xlsx',
@@ -211,42 +158,71 @@ export default {
   created() {
     this.currentSearch.push(this.begin)
     this.currentSearch.push(this.end)
-    this.getList()
-    this.getUsersOptionList()
+    // this.getList()
+    this.getComputersOptionList()
+    this.getGroupOptionList()
   },
   methods: {
-    changeUser() {
+    changeComputer() {
+      // 添加计算机编号
+      this.computerIds = [this.currentComputer.id]
+      this.currentGroup = null
+      this.getList()
+    },
+    changeGroup() {
+      // 添加计算机编号
+      this.computerIds = []
+      this.currentComputer = null
+      console.log(this.currentGroup)
+      this.currentGroup.forEach(g => {
+        g.computers.forEach(c => {
+          this.computerIds.push(c.id)
+        })
+      })
       this.getList()
     },
     handleDownload() {
       this.listLoading = true
-      Promise.all([Api.getListByFinishedConditionAndModeTypeId(2, 1, { login: this.currentUser }), Api.getListByFinishedConditionAndModeTypeId(2, 2, { login: this.currentUser })])
+      Promise.all([Api.getListByFilter({
+        page: this.listQuery.page - 1,
+        size: this.listQuery.pageSize,
+        computerId: {
+          in: this.computerIds
+        }
+      })])
         .then(responses => {
           this.allbjblist = responses[0].data
-          this.allsjblist = responses[1].data
           this.listLoading = false
           this.downloadLoading = true
           import('@/vendor/Export2ExcelJs').then(excel => {
-            const tHeader = ['定制编号', '定制型号', '定制类型', '收件人姓名', '客户ID', '定制状态', '定制日期', '代理用户']
-            const filterVal = ['customNumber', 'diePattern.diePatternType', 'modelType.value', 'theRecipientName', 'taobaoNickname', 'finishedCondition.value', 'createdDate', 'user.login']
-            const allBjblist = this.allbjblist
-            const allSbdlist = this.allsjblist
+            const tHeader = ['计算机名称', '计算机备注', '用户名称', '软件名称', '运行时间', '运行日期']
+            const filterVal = ['computer.name', 'computer.code', 'userinfo.username', 'software.name', 'runTime', 'createdDate']
+            const allBjblist = []
+            this.allbjblist.forEach(a => {
+              a.runTime = this.difference(a.startDate, a.endDate)
+              allBjblist.push(a)
+            })
             let text = ''
-            if (this.currentUser) {
-              text = this.currentUser
+            if (this.currentComputer) {
+              text = this.currentComputer.name + '>' + this.currentComputer.code
             } else {
-              text = '所有用户'
+              text = '所有计算机'
             }
             const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
-            this.filename = s + text + '作品明细表'
-            const multiHeader = [['', '', '', '新路通来图个性定制系统', '', '', '', ''], ['', '', '', '作品定制明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
+            this.filename = s + text + '运行明细表'
+            const multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + text]]
             const bjbdata = this.formatJson(filterVal, allBjblist)
-            const sbddata = this.formatJson(filterVal, allSbdlist)
+            const datas = []
+            const headers = []
+            const sheetnames = []
+            headers.push(tHeader)
+            datas.push(bjbdata)
+            sheetnames.push(text)
             excel.export_json_to_excel_sheet({
-              headers: [tHeader, tHeader],
-              datas: [bjbdata, sbddata],
+              headers: headers,
+              datas: datas,
               multiHeader: multiHeader,
-              sheetnames: ['笔记本', '鼠标垫'],
+              sheetnames: sheetnames,
               filename: this.filename,
               autoWidth: this.autoWidth,
               bookType: this.bookType
@@ -258,19 +234,51 @@ export default {
     getList() {
       this.listLoading = true
       this.getBjbList()
-      this.getSbdList()
+      // this.getSbdList()
     },
     getBjbList() {
       this.listLoading = true
-      Api.getListByFinishedConditionAndModeTypeIdByPage(2, 1, {
+      Api.getListByFilter({
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
-        login: this.currentUser
+        computerId: {
+          in: this.computerIds
+        }
       }).then(response => {
-        this.bjblist = response.data
+        const authorInfos = []
+        response.data.forEach(a => {
+          a.runTime = this.difference(a.startDate, a.endDate)
+          authorInfos.push(a)
+        })
+        this.authorizationlist = authorInfos
+        console.log(this.authorizationlist)
         this.total = Number(response.headers['x-total-count']) || 0
         this.listLoading = false
       })
+      // Api.getListByFinishedConditionAndModeTypeIdByPage(2, 1, {
+      //   page: this.listQuery.page - 1,
+      //   size: this.listQuery.pageSize,
+      //   login: this.currentComputer
+      // }).then(response => {
+      //   this.bjblist = response.data
+      //   this.total = Number(response.headers['x-total-count']) || 0
+      //   this.listLoading = false
+      // })
+    },
+    difference: function(beginTime, endTime) {
+      var dateBegin = new Date(beginTime)
+      var dateEnd = new Date(endTime)
+      var dateDiff = dateEnd.getTime() - dateBegin.getTime()// 时间差的毫秒数
+      var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000))// 计算出相差天数
+      var leave1 = dateDiff % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+      var hours = Math.floor(leave1 / (3600 * 1000))// 计算出小时数
+      // 计算相差分钟数
+      var leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+      var minutes = Math.floor(leave2 / (60 * 1000)) // 计算相差分钟数
+      // 计算相差秒数
+      var leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      var seconds = Math.round(leave3 / 1000)
+      return '运行' + dayDiff + '天' + hours + '小时' + minutes + '分钟' + seconds + '秒'
     },
     getAllBjbList() {
       this.listLoading = true
@@ -293,7 +301,7 @@ export default {
       Api.getListByFinishedConditionAndModeTypeIdByPage(2, 2, {
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
-        login: this.currentUser
+        login: this.currentComputer
       }).then(response => {
         this.sjblist = response.data
         this.total = Number(response.headers['x-total-count']) || 0
@@ -306,10 +314,40 @@ export default {
       this.end = query[1]
       this.getList()
     },
-    getUsersOptionList() {
-      UserApi.getList({ page: 0, size: 1000000 }).then(response => {
-        this.usersOptions = response.data
+    getComputersOptionList() {
+      ComputeApi.getList({ page: 0, size: 1000000 }).then(response => {
+        this.computerOptions = response.data
       })
+    },
+    getGroupOptionList() {
+      GroupApi.getList({ page: 0, size: 1000000 }).then(response => {
+        const groups = []
+        response.data.forEach((e) => {
+          groups.push(GroupApi.getById(e.id))
+        })
+        // this.total = Number(response.headers['x-total-count']) || 0
+        return Promise.all(groups)
+      }).then(response => {
+        const tempGroups = []
+        let tempGroupsComputer = []
+        response.forEach(re => {
+          console.log('分组电脑返回值数组: ' + JSON.stringify(re.data.computers))
+          tempGroups.push(re.data)
+          // eslint-disable-next-line no-const-assign
+          tempGroupsComputer = _.concat(tempGroupsComputer, re.data.computers)
+          console.log('有分组的计算机:: ' + JSON.stringify(tempGroupsComputer))
+        })
+        console.log('有分组的计算机2:: ' + JSON.stringify(tempGroups))
+        console.log('有分组的计算机3:: ' + JSON.stringify(tempGroupsComputer))
+        // this.hasGroupComputerList = tempGroupsComputer
+        // console.log('有分组的计算机4:: ' + JSON.stringify(this.hasGroupComputerList))
+        this.groupOptions = tempGroups
+        // this.listLoading = false
+        // return ComputeApi.getList()
+      })
+      // GroupApi.getList().then(response => {
+      //   this.groupOptions = response.data
+      // })
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val
