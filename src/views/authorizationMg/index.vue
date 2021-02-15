@@ -2,7 +2,7 @@
   <div class="app-container agent-wrapper">
     <el-form :inline="true" class="form-inline">
       <el-form-item label="授权:">
-        <el-input v-model="currentSearch" placeholder="<按软件信息>查找 授权" clearable />
+        <el-input v-model="currentSearch" placeholder="<按软件信息/用户信息/计算机>查找 授权" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
@@ -164,13 +164,11 @@
 
 <script>
 import * as Api from '@/api/authorization'
-import * as SoftwareApi from '@/api/software'
 import * as GroupApi from '@/api/computer-groups'
 import * as ComputeApi from '@/api/computer'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import _ from 'lodash'
-import qs from 'qs'
 export default {
   name: 'AuthorizationList',
   components: { Pagination },
@@ -455,31 +453,19 @@ export default {
     loadAll() {
       if (this.currentSearch) {
         this.listLoading = true
-        SoftwareApi.getSearchList({
+        Api.getSearchList({
           query: this.currentSearch,
           page: this.listQuery.page - 1,
           size: this.listQuery.pageSize,
           sort: 'lastModifiedDate,desc'
         }).then(response => {
           const data = response.data
-          const searchSoftwareIds = []
-          data.forEach(software => {
-            searchSoftwareIds.push(software.id)
-          })
-          console.log(searchSoftwareIds)
-          const tempParams = { softwareId: { in: searchSoftwareIds }}
-          const params = qs.stringify(tempParams, { arrayFormat: 'repeat', allowDots: true })
-          console.log('temp' + JSON.stringify(tempParams))
-          console.log('param' + params)
-          return Api.getListByFilter(tempParams)
-        }).then(response => {
-          const data = response.data
           data.forEach(item => {
             item.currentDate = []
             item.currentDate.push(item.startDate, item.endDate)
-            this.list = data
-            this.total = Number(response.headers['x-total-count']) || 0
           })
+          this.list = data
+          this.total = Number(response.headers['x-total-count']) || 0
           this.listLoading = false
         })
         return
