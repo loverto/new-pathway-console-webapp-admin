@@ -1,6 +1,6 @@
 {
   "name": "new-pathway-console-admin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A project build with vue.js",
   "author": "Yinlf",
   "license": "MIT",
@@ -51,7 +51,7 @@
     "dropzone": "5.5.1",
     "echarts": "4.2.1",
     "element-ui": "2.7.0",
-    "exceljs": "^1.15.0",
+    "exceljs": "4.2.0",
     "file-saver": "2.0.1",
     "filereader-stream": "^2.0.0",
     "fuse.js": "3.4.4",

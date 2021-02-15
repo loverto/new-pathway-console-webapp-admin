@@ -13,7 +13,7 @@ import * as ExcelJs from 'exceljs/dist/exceljs'
  * @param bookType 文档类型
  */
 export function export_json_to_excel_sheet({
-  multiHeader = [],
+  multiHeaders = [],
   headers = [],
   datas = [],
   filename,
@@ -29,6 +29,7 @@ export function export_json_to_excel_sheet({
   for (let tmp = 0; tmp <= datas.length - 1; tmp++) {
     // 获取数据
     const data = datas[tmp]
+    const multiHeader = multiHeaders[tmp]
     // 添加表头, 合并表头的数据
     const header = headers[tmp]
     data.unshift(header)

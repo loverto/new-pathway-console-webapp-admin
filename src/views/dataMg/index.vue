@@ -89,10 +89,8 @@
 
 <script>
 import * as Api from '@/api/loginfos'
-import * as SoftwareApi from '@/api/software'
 import * as GroupApi from '@/api/computer-groups'
 import * as ComputeApi from '@/api/computer'
-import * as UserApi from '@/api/agent'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -183,7 +181,11 @@ export default {
       this.listLoading = true
       Promise.all([Api.getListByFilter({
         page: this.listQuery.page - 1,
-        size: this.listQuery.pageSize,
+        size: 10000,
+        endDate: {
+          greaterThanOrEqual: this.begin,
+          lessThanOrEqual: this.end
+        },
         computerId: {
           in: this.computerIds
         }
@@ -203,16 +205,18 @@ export default {
             let text = ''
             if (this.currentComputer) {
               text = this.currentComputer.name + '>' + this.currentComputer.code
+            } else if (this.currentGroup) {
+              text = this.currentGroup.name + '的计算机'
             } else {
               text = '所有计算机'
             }
-            const computerGroupObject = _.groupBy(this.allbjblist, 'computer.code')
+            const computerGroupObject = _.groupBy(this.allbjblist, 'computer.name')
             const keys = Object.keys(computerGroupObject)
             console.log(computerGroupObject)
             console.log(keys)
             const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
             this.filename = s + text + '运行明细表'
-            let multiHeader = []
+            const multiHeaders = []
             const datas = []
             const headers = []
             const sheetnames = []
@@ -220,14 +224,15 @@ export default {
               const computerGroupObjectElement = computerGroupObject[k]
               const bjbdata = this.formatJson(filterVal, computerGroupObjectElement)
               datas.push(bjbdata)
-              multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + k]]
-              sheetnames.push(computerGroupObjectElement.computer.name)
+              const multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + k]]
+              multiHeaders.push(multiHeader)
+              sheetnames.push(k)
               headers.push(tHeader)
             })
             excel.export_json_to_excel_sheet({
               headers: headers,
               datas: datas,
-              multiHeader: multiHeader,
+              multiHeaders: multiHeaders,
               sheetnames: sheetnames,
               filename: this.filename,
               autoWidth: this.autoWidth,
@@ -247,8 +252,13 @@ export default {
       Api.getListByFilter({
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
+        sort: 'lastModifiedDate,desc',
         computerId: {
           in: this.computerIds
+        },
+        endDate: {
+          greaterThanOrEqual: this.begin,
+          lessThanOrEqual: this.end
         }
       }).then(response => {
         const authorInfos = []
