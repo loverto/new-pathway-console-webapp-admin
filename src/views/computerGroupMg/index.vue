@@ -87,6 +87,10 @@ export default {
         page: 1,
         pageSize: 10
       },
+      listComputerQuery: {
+        page: 1,
+        pageSize: 100
+      },
       showMask: false,
       curProd: null,
       curComputerList: null
@@ -108,6 +112,11 @@ export default {
       const data = {
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
+        sort: 'lastModifiedDate,desc'
+      }
+      const computerData = {
+        page: this.listComputerQuery.page - 1,
+        size: this.listComputerQuery.pageSize,
         sort: 'lastModifiedDate,desc'
       }
       Api.getList(data).then(response => {
@@ -137,7 +146,7 @@ export default {
         console.log('有分组的计算机4:: ' + JSON.stringify(this.hasGroupComputerList))
         this.list = tempGroups
         this.listLoading = false
-        return ComputeApi.getList()
+        return ComputeApi.getList(computerData)
       }).then(response => {
         console.log('计算机数据:' + JSON.stringify(response.data))
         console.log('分组数据:' + JSON.stringify(this.hasGroupComputerList))
