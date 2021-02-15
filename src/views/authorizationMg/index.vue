@@ -17,9 +17,9 @@
         width="50"
       />
 
-      <el-table-column align="center" label="分组>计算机名>计算机备注" width="220">
+      <el-table-column align="center" label="分组>计算机名>计算机备注" width="350">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.computer" value-key="id" class="width-192" placeholder="请选择">
+          <el-select v-model="scope.row.computer" value-key="id" class="width-320" placeholder="请选择">
             <el-option
               v-for="item in computerOptions"
               :key="item.id"
@@ -43,7 +43,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="用户" width="250">
+      <el-table-column align="center" label="用户" width="150">
         <template slot-scope="scope">
           <el-select v-model="scope.row.userinfo" value-key="id" class="width-192" placeholder="请选择">
             <el-option
@@ -56,7 +56,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="用户编码" width="250">
+      <el-table-column align="center" label="用户编码" width="150">
         <template slot-scope="scope">
           <span v-if="scope.row.userinfo && scope.row.userinfo.code">{{ scope.row.userinfo.code }}</span>
         </template>
@@ -248,7 +248,7 @@ export default {
       },
       computerListQuery: {
         page: 1,
-        pageSize: 10
+        pageSize: 1000
       },
       ruleForm: null,
       rule: {
@@ -325,7 +325,11 @@ export default {
             this.groupComputer.push(c)
           })
         })
-        return ComputeApi.getList()
+        return ComputeApi.getList({
+          page: this.computerListQuery.page - 1,
+          size: this.computerListQuery.pageSize,
+          sort: 'lastModifiedDate,desc'
+        })
       }).then(response => {
         let computers = []
         // const minus = response.data.filter(x => !this.groupComputer.has(x))
@@ -555,6 +559,9 @@ export default {
 <style lang="scss" scoped>
 .width-192 {
   max-width: 192px;
+}
+.width-320 {
+  width: 320px;
 }
 .el-form-item__tip {
   font-size: 12px;

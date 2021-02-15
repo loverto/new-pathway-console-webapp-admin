@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
     <!-- 编辑产品弹框 -->
     <el-dialog
@@ -101,7 +101,7 @@ export default {
       studioConfig: {},
       listQuery: {
         page: 1,
-        pageSize: 10
+        pageSize: 50
       },
       showMask: false,
       showFontMask: false,
@@ -111,7 +111,6 @@ export default {
   },
   created() {
     this.loadAll()
-
     // 监听一个保存成功的回调
     // 用于修改产品后触发列表刷新
     this.$on('saveNotify', (flag) => {
@@ -128,7 +127,6 @@ export default {
         sort: 'lastModifiedDate,desc'
       }
       GroupApi.getList(data).then(response => {
-        this.total = Number(response.headers['x-total-count']) || 0
         return new Promise((resolve, reject) => {
           resolve(response)
         })
@@ -151,7 +149,7 @@ export default {
         return Api.getList(data)
       }).then(response => {
         let computers = []
-        // const minus = response.data.filter(x => !this.groupComputer.has(x))
+        this.total = Number(response.headers['x-total-count']) || 0
         if (!_.isEmpty(this.groupComputer)) {
           console.log('groupComputer:' + JSON.stringify(this.groupComputer))
           // 排除掉有分组名称的
