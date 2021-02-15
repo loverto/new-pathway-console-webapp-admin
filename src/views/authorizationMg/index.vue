@@ -6,7 +6,8 @@
       </el-form-item>
       <el-form-item>
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">添加授权</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">按计算机添加授权</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="handleGroupAdd">按分组添加授权</el-button>
       </el-form-item>
     </el-form>
 
@@ -94,7 +95,18 @@
     <el-dialog v-if="showMask" :visible.sync="showMask" :title="maskTitle" width="650px">
       <div class="dialog-form__wrapper">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
-          <el-form-item label="计算机:" prop="computer">
+          <el-form-item v-if="showGroupMask" label="计算机分组:" prop="computer">
+            <el-select v-model="ruleForm.computer" value-key="id" class="width-192" placeholder="请选择">
+              <el-option
+                v-for="item in groupOptions"
+                :key="item.id"
+                :label="item.name"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item v-else label="计算机:" prop="computer">
             <el-select v-model="ruleForm.computer" value-key="id" class="width-192" placeholder="请选择">
               <el-option
                 v-for="item in computerOptions"
@@ -236,6 +248,7 @@ export default {
       currentSearch: '',
       activatedOptions: [{ id: true, value: '启用' }, { id: false, value: '禁用' }],
       computerOptions: [],
+      groupOptions: [],
       groupComputer: [],
       softwareOptions: [],
       userinfoOptions: [],
@@ -266,6 +279,7 @@ export default {
         ]
       },
       showMask: false,
+      showGroupMask: false,
       maskTitle: '新增'
     }
   },
@@ -311,6 +325,7 @@ export default {
         })
       }).then(response => {
         const computers = []
+        this.groupOptions = response.data
         response.data.forEach((e) => {
           computers.push(GroupApi.getById(e.id))
         })
@@ -385,6 +400,12 @@ export default {
     },
     handleAdd() {
       this.showMask = true
+      this.showGroupMask = false
+      this.maskTitle = '新增'
+    },
+    handleGroupAdd() {
+      this.showMask = true
+      this.showGroupMask = true
       this.maskTitle = '新增'
     },
     handleEdit(row) {
@@ -486,22 +507,54 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const authObject = this.ruleForm
-          authObject.startDate = authObject.currentDate[0]
-          authObject.endDate = authObject.currentDate[1]
-          Api.saveOrUpdate(authObject).then(response => {
-            if (response.status === 201) {
-              this.$message({
-                message: '保存成功！',
-                type: 'success'
-              })
-              this.showMask = false
-              this.getList()
-              this.resetRuleForm()
-            }
-          }).catch(err => {
-            console.error(err)
-          })
+          if (!this.showGroupMask) {
+            const authObject = this.ruleForm
+            authObject.startDate = authObject.currentDate[0]
+            authObject.endDate = authObject.currentDate[1]
+            Api.saveOrUpdate(authObject).then(response => {
+              if (response.status === 201) {
+                this.$message({
+                  message: '保存成功！',
+                  type: 'success'
+                })
+                this.showMask = false
+                this.getList()
+                this.resetRuleForm()
+              }
+            }).catch(err => {
+              console.error(err)
+            })
+          } else {
+            const authObject = this.ruleForm
+            // 获取计算机id
+            GroupApi.getById(authObject.computer.id).then(response => {
+              if (response.data) {
+                const computers = []
+                response.data.computers.forEach((c) => {
+                  const singleAuthObject = _.clone(authObject)
+                  singleAuthObject.computer = c
+                  singleAuthObject.startDate = authObject.currentDate[0]
+                  singleAuthObject.endDate = authObject.currentDate[1]
+                  computers.push(Api.saveOrUpdate(singleAuthObject))
+                })
+                Promise.all(computers).then(response => {
+                  response.forEach(re => {
+                    if (re.status === 201) {
+                      this.$message({
+                        message: '保存成功！',
+                        type: 'success'
+                      })
+                      this.showMask = false
+                      this.getList()
+                      this.resetRuleForm()
+                    }
+                  })
+                }).catch(err => {
+                  console.error(err)
+                })
+              }
+            })
+          }
         } else {
           return false
         }
