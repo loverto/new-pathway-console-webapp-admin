@@ -224,7 +224,7 @@ export default {
               const computerGroupObjectElement = computerGroupObject[k]
               const bjbdata = this.formatJson(filterVal, computerGroupObjectElement)
               datas.push(bjbdata)
-              const multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + k]]
+              const multiHeader = [['', '', '', '新路通排版服务个性定制系统', '', '', '', ''], ['', '', '', '运行情况明细表', '', '', '', ''], ['查询日期：' + s, '', '', '', '', '', '', '查询范围：' + k]]
               multiHeaders.push(multiHeader)
               sheetnames.push(k)
               headers.push(tHeader)

@@ -13,12 +13,12 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentUser" placeholder="选择用户" @change="changeUser()">
+        <el-select v-model="currentUser" value-key="id" placeholder="选择用户" @change="changeUser()">
           <el-option
             v-for="item in usersOptions"
-            :key="item.login"
-            :label="item.login"
-            :value="item.login"
+            :key="item.id"
+            :label="item.username"
+            :value="item"
           />
         </el-select>
         <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
@@ -32,42 +32,31 @@
         width="50"
       />
 
-      <el-table-column align="center" label="账号">
+      <el-table-column align="center" label="用户名">
         <template slot-scope="scope">
-          <span>{{ scope.row.login }}</span>
+          <span>{{ scope.row.userinfo.username }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="代理姓名">
+      <el-table-column align="center" label="用户编号">
         <template slot-scope="scope">
-          <span>{{ scope.row.firstName }}</span>
+          <span>{{ scope.row.userinfo.code }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="代理名称">
+      <el-table-column align="center" label="软件名称">
         <template slot-scope="scope">
-          <span>{{ scope.row.lastName }}</span>
+          <span>{{ scope.row.software.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="贴膜使用次数">
+      <el-table-column align="center" label="运行时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.tmCount }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="鼠标垫使用次数">
-        <template slot-scope="scope">
-          <span>{{ scope.row.sbdCount }}</span>
+          <span>{{ scope.row.runtimeShow }}</span>
         </template>
       </el-table-column>
 
     </el-table>
-
-    <template>
-      <div>贴膜使用次数：<span style="color: red">{{ totalTm }}</span></div>
-      <div>鼠标垫使用次数：<span style="color: red">{{ totalSbd }}</span></div>
-    </template>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize" @pagination="getList" />
 
@@ -75,7 +64,7 @@
 </template>
 
 <script>
-import * as Api from '@/api/agent'
+import * as Api from '@/api/authorization'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -142,36 +131,50 @@ export default {
     changeUser() {
       this.getList()
     },
+    difference: function(dateDiff) {
+      var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000))// 计算出相差天数
+      var leave1 = dateDiff % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+      var hours = Math.floor(leave1 / (3600 * 1000))// 计算出小时数
+      // 计算相差分钟数
+      var leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+      var minutes = Math.floor(leave2 / (60 * 1000)) // 计算相差分钟数
+      // 计算相差秒数
+      var leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      var seconds = Math.round(leave3 / 1000)
+      return '运行' + dayDiff + '天' + hours + '小时' + minutes + '分钟' + seconds + '秒'
+    },
     handleDownload() {
       this.listLoading = true
       this.downloadLoading = true
       Api.getWorkListData({
-        begin: this.begin,
-        end: this.end,
-        login: this.currentUser
+        page: this.listQuery.page - 1,
+        size: 100000000,
+        startDate: this.begin,
+        endDate: this.end,
+        userinfo: this.currentUser.id
       }).then(response => {
         this.exportlist = response.data
         import('@/vendor/Export2ExcelJs').then(excel => {
-          const tHeader = ['账号', '代理姓名', '代理名称', '贴膜使用次数', '鼠标垫使用次数']
-          const filterVal = ['login', 'firstName', 'lastName', 'tmCount', 'sbdCount']
+          const tHeader = ['用户名', '用户编号', '软件名称', '运行时间']
+          const filterVal = ['userinfo.username', 'userinfo.code', 'software.name', 'runtime']
           const list = this.exportlist
           let text = ''
           if (this.currentUser) {
-            text = this.currentUser
+            text = this.currentUser.username
           } else {
             text = '所有用户'
           }
           const s = parseTime(this.begin, '{y}-{m}-{d}') + '至' + parseTime(this.end, '{y}-{m}-{d}')
-          this.filename = s + text + '作品汇总表'
+          this.filename = s + text + '运行情况汇总表'
 
           const data = this.formatJson(filterVal, list)
-          const multiHeader = [['', '', '新路通来图个性定制系统', '', ''], ['', '', '作品定制汇总表', '', ''], ['查询日期：' + s, '', '', '', '查询范围：' + text]]
+          const multiHeader = [['', '', '新路通排版服务个性定制系统', '', ''], ['', '', '运行情况汇总表', '', ''], ['查询日期：' + s, '', '', '', '查询范围：' + text]]
           console.log(data)
           excel.export_json_to_excel_sheet({
             headers: [tHeader],
             datas: [data],
-            multiHeader: multiHeader,
-            sheetnames: ['作品定制汇总表'],
+            multiHeaders: [multiHeader],
+            sheetnames: ['运行情况汇总表'],
             filename: this.filename,
             autoWidth: this.autoWidth,
             bookType: this.bookType
@@ -186,14 +189,15 @@ export default {
       Api.getWorkList({
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
-        begin: this.begin,
-        end: this.end,
-        login: this.currentUser
+        startDate: this.begin,
+        endDate: this.end,
+        userinfo: this.currentUser.id
       }).then(response => {
         this.list = response.data
         this.totalTm = 0
         this.totalSbd = 0
         this.list.forEach((item) => {
+          item.runtimeShow = this.difference(item.runtime)
           // 遍历 tmCount 这个字段，并累加
           this.totalTm += item.tmCount
           // 遍历 sbdCount 这个字段，并累加
@@ -211,7 +215,7 @@ export default {
       this.getList()
     },
     getUsersOptionList() {
-      Api.getList({ page: 0, size: 1000000 }).then(response => {
+      Api.getUserinfoList({ page: 0, size: 1000000 }).then(response => {
         this.usersOptions = response.data
       })
     },
@@ -230,6 +234,8 @@ export default {
       return jsonData.map(v => filterVal.map(j => {
         if (j === 'createdDate') {
           return parseTime(v[j], '{y}-{m}-{d}')
+        } else if (j === 'runtime') {
+          return this.difference(v[j])
         } else {
           if (j.indexOf('.') > 0) {
             const t = j.split('.')

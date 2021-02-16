@@ -24,6 +24,16 @@ const dataRouter = {
         icon: 'list',
         roles
       }
+    },
+    {
+      path: '/data/sum',
+      component: () => import('@/views/dataMg/sum'),
+      name: 'WorkdSum',
+      meta: {
+        title: '运行汇总',
+        icon: 'form',
+        roles
+      }
     }
   ]
 }
