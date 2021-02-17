@@ -116,25 +116,3 @@ export function getGroupComputerList(query) {
   })
 }
 
-/**
- * 获取用户列表
- */
-export function getWorkList(query) {
-  return request({
-    url: '/api/authorization-infos/work/data',
-    method: 'get',
-    params: query
-  })
-}
-
-/**
- * 获取用户列表
- */
-export function getWorkListData(query) {
-  return request({
-    url: '/api/authorization-infos/work/data',
-    method: 'get',
-    params: query
-  })
-}
-

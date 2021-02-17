@@ -49,3 +49,26 @@ export function getListByFilter(query) {
     paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
   })
 }
+
+/**
+ * 获取用户列表
+ */
+export function getWorkList(query) {
+  return request({
+    url: '/api/loginfos/work/data',
+    method: 'get',
+    params: query
+  })
+}
+
+/**
+ * 获取用户列表
+ */
+export function getWorkListData(query) {
+  return request({
+    url: '/api/loginfos/work/data',
+    method: 'get',
+    params: query
+  })
+}
+

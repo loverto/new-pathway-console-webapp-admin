@@ -64,7 +64,8 @@
 </template>
 
 <script>
-import * as Api from '@/api/authorization'
+import * as Api from '@/api/loginfos'
+import * as UserInfoApi from '@/api/userinfo'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -215,7 +216,7 @@ export default {
       this.getList()
     },
     getUsersOptionList() {
-      Api.getUserinfoList({ page: 0, size: 1000000 }).then(response => {
+      UserInfoApi.getList({ page: 0, size: 1000000 }).then(response => {
         this.usersOptions = response.data
       })
     },
