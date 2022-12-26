@@ -13,7 +13,7 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentUser" value-key="id" placeholder="选择用户" @change="changeUser()">
+        <el-select v-model="currentUser" filterable value-key="id" placeholder="选择用户" @change="changeUser()">
           <el-option
             v-for="item in usersOptions"
             :key="item.id"
@@ -21,7 +21,15 @@
             :value="item"
           />
         </el-select>
-        <el-button type="success" icon="el-icon-download" @click="handleDownload">导出明细</el-button>
+        <el-select v-model="currentSoftware" filterable value-key="id" placeholder="选择软件" @change="changeSoftware()">
+          <el-option
+            v-for="item in softwaresOptions"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
+          />
+        </el-select>
+        <el-button type="success" icon="el-icon-download" @click="handleDownload">导出汇总明细</el-button>
       </el-form-item>
     </el-form>
 
@@ -66,6 +74,7 @@
 <script>
 import * as Api from '@/api/loginfos'
 import * as UserInfoApi from '@/api/userinfo'
+import * as SoftwareApi from '@/api/software'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -105,12 +114,14 @@ export default {
       list: [],
       exportlist: [],
       usersOptions: [],
+      softwaresOptions: [],
       total: 0,
       begin: new Date(new Date().setTime(new Date().getTime() - 3600 * 1000 * 24 * 30)),
       end: new Date(),
       listLoading: true,
       downloadLoading: false,
       currentUser: '',
+      currentSoftware: '',
       filename: '',
       autoWidth: true,
       bookType: 'xlsx',
@@ -127,22 +138,19 @@ export default {
     this.currentSearch.push(this.end)
     this.getList()
     this.getUsersOptionList()
+    this.getSoftwaresOptionList()
   },
   methods: {
     changeUser() {
       this.getList()
     },
+    changeSoftware() {
+      this.getList()
+    },
     difference: function(dateDiff) {
-      var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000))// 计算出相差天数
-      var leave1 = dateDiff % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
-      var hours = Math.floor(leave1 / (3600 * 1000))// 计算出小时数
-      // 计算相差分钟数
-      var leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
-      var minutes = Math.floor(leave2 / (60 * 1000)) // 计算相差分钟数
-      // 计算相差秒数
-      var leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
-      var seconds = Math.round(leave3 / 1000)
-      return '运行' + dayDiff + '天' + hours + '小时' + minutes + '分钟' + seconds + '秒'
+      // 把相差的毫秒数转换为小时数
+      var hours = Math.floor(dateDiff / (3600 * 1000))
+      return '运行' + hours + '小时'
     },
     handleDownload() {
       this.listLoading = true
@@ -152,7 +160,8 @@ export default {
         size: 100000000,
         startDate: this.begin,
         endDate: this.end,
-        userinfo: this.currentUser.id
+        userinfo: this.currentUser.id,
+        software: this.currentSoftware.id
       }).then(response => {
         this.exportlist = response.data
         import('@/vendor/Export2ExcelJs').then(excel => {
@@ -192,7 +201,8 @@ export default {
         size: this.listQuery.pageSize,
         startDate: this.begin,
         endDate: this.end,
-        userinfo: this.currentUser.id
+        userinfo: this.currentUser.id,
+        software: this.currentSoftware.id
       }).then(response => {
         this.list = response.data
         this.totalTm = 0
@@ -218,6 +228,11 @@ export default {
     getUsersOptionList() {
       UserInfoApi.getList({ page: 0, size: 1000000 }).then(response => {
         this.usersOptions = response.data
+      })
+    },
+    getSoftwaresOptionList() {
+      SoftwareApi.getList({ page: 0, size: 1000000 }).then(response => {
+        this.softwaresOptions = response.data
       })
     },
     handleSizeChange(val) {

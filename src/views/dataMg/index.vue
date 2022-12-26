@@ -13,7 +13,7 @@
           end-placeholder="结束日期"
         />
         <el-button type="success" icon="el-icon-search" @click="search(currentSearch)">查询</el-button>
-        <el-select v-model="currentComputer" value-key="id" placeholder="选择计算机" @change="changeComputer()">
+        <el-select v-model="currentComputer" filterable value-key="id" placeholder="选择计算机" @change="changeComputer()">
           <el-option
             v-for="item in computerOptions"
             :key="item.id"
@@ -21,11 +21,19 @@
             :value="item"
           />
         </el-select>
-        <el-select v-model="currentGroup" value-key="id" placeholder="选择分组" @change="changeGroup()">
+        <el-select v-model="currentGroup" filterable value-key="id" placeholder="选择分组" @change="changeGroup()">
           <el-option
             v-for="item in groupOptions"
             :key="item.id"
             :label="item.name"
+            :value="item"
+          />
+        </el-select>
+        <el-select v-model="currentUserinfo" filterable value-key="id" placeholder="选择用户" @change="changeUserinfo()">
+          <el-option
+            v-for="item in userinfoOptions"
+            :key="item.id"
+            :label="item.username"
             :value="item"
           />
         </el-select>
@@ -72,7 +80,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center" label="运行日期">
+          <el-table-column align="center" label="开始运行日期">
             <template slot-scope="scope">
               <span>{{ scope.row.createdDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
             </template>
@@ -91,6 +99,7 @@
 import * as Api from '@/api/loginfos'
 import * as GroupApi from '@/api/computer-groups'
 import * as ComputeApi from '@/api/computer'
+import * as UserinfoApi from '@/api/userinfo'
 import { types } from '@/utils/role'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
@@ -131,11 +140,13 @@ export default {
       currentSearch: [],
       list: [],
       computerIds: [],
+      userinfoIds: [],
       authorizationlist: [],
       sjblist: [],
       allbjblist: [],
       allsjblist: [],
       computerOptions: [],
+      userinfoOptions: [],
       groupOptions: [],
       total: 0,
       listLoading: true,
@@ -147,6 +158,7 @@ export default {
       downloadLoading: false,
       currentComputer: '',
       currentGroup: '',
+      currentUserinfo: '',
       filename: '',
       autoWidth: true,
       bookType: 'xlsx',
@@ -159,6 +171,7 @@ export default {
     this.getList()
     this.getComputersOptionList()
     this.getGroupOptionList()
+    this.getUserinfosOptionList()
   },
   methods: {
     changeComputer() {
@@ -177,6 +190,13 @@ export default {
       })
       this.getList()
     },
+    changeUserinfo() {
+      // 添加计算机编号
+      this.userinfoIds = []
+      console.log(this.currentUserinfo)
+      this.userinfoIds.push(this.currentUserinfo.id)
+      this.getList()
+    },
     handleDownload() {
       this.listLoading = true
       Promise.all([Api.getListByFilter({
@@ -188,6 +208,9 @@ export default {
         },
         computerId: {
           in: this.computerIds
+        },
+        userinfoId: {
+          in: this.userinfoIds
         }
       })])
         .then(responses => {
@@ -255,6 +278,9 @@ export default {
         sort: 'lastModifiedDate,desc',
         computerId: {
           in: this.computerIds
+        },
+        userinfoId: {
+          in: this.userinfoIds
         },
         endDate: {
           greaterThanOrEqual: this.begin,
@@ -332,7 +358,13 @@ export default {
     },
     getComputersOptionList() {
       ComputeApi.getList({ page: 0, size: 1000000 }).then(response => {
-        this.computerOptions = response.data
+        // 过滤掉status为false的数据
+        this.computerOptions = response.data.filter(a => a.status === true)
+      })
+    },
+    getUserinfosOptionList() {
+      UserinfoApi.getList({ page: 0, size: 1000000 }).then(response => {
+        this.userinfoOptions = response.data
       })
     },
     getGroupOptionList() {

@@ -96,7 +96,7 @@
       <div class="dialog-form__wrapper">
         <el-form ref="ruleForm" :model="ruleForm" :rules="rule" label-width="100px">
           <el-form-item v-if="showGroupMask" label="计算机分组:" prop="computer">
-            <el-select v-model="ruleForm.computer" value-key="id" class="width-192" placeholder="请选择">
+            <el-select v-model="ruleForm.computer" filterable value-key="id" class="width-192" placeholder="请选择">
               <el-option
                 v-for="item in groupOptions"
                 :key="item.id"
@@ -107,7 +107,7 @@
           </el-form-item>
 
           <el-form-item v-else label="计算机:" prop="computer">
-            <el-select v-model="ruleForm.computer" value-key="id" class="width-192" placeholder="请选择">
+            <el-select v-model="ruleForm.computer" filterable value-key="id" class="width-192" placeholder="请选择">
               <el-option
                 v-for="item in computerOptions"
                 :key="item.id"
@@ -118,7 +118,7 @@
           </el-form-item>
 
           <el-form-item label="软件:" prop="software">
-            <el-select v-model="ruleForm.software" value-key="id" class="width-192" placeholder="请选择">
+            <el-select v-model="ruleForm.software" filterable value-key="id" class="width-192" placeholder="请选择">
               <el-option
                 v-for="item in softwareOptions"
                 :key="item.id"
@@ -129,7 +129,7 @@
           </el-form-item>
 
           <el-form-item label="用户:" prop="userinfo">
-            <el-select v-model="ruleForm.userinfo" value-key="id" class="width-192" placeholder="请选择">
+            <el-select v-model="ruleForm.userinfo" filterable value-key="id" class="width-192" placeholder="请选择">
               <el-option
                 v-for="item in userinfoOptions"
                 :key="item.id"
@@ -301,7 +301,10 @@ export default {
           item.currentDate = []
           item.currentDate.push(item.startDate, item.endDate)
         })
-        this.list = data
+        // 排除掉computer为status = false的数据
+        this.list = _.filter(data, item => {
+          return item.computer.status === true
+        })
         this.total = Number(response1.headers['x-total-count']) || 0
         this.listLoading = false
       })
@@ -366,7 +369,10 @@ export default {
             computers.push(c)
           })
         }
-        this.computerOptions = computers
+        // 把status为false的过滤掉
+        this.computerOptions = _.filter(computers, item => {
+          return item.status === true
+        })
       })
       //   .then(response => {
       //   console.log('计算机数据:' + JSON.stringify(response.data))
@@ -464,7 +470,10 @@ export default {
             item.currentDate = []
             item.currentDate.push(item.startDate, item.endDate)
           })
-          this.list = data
+          // 排除掉计算机status 为 false 的数据
+          this.list = _.filter(data, item => {
+            return item.computer.status === true
+          })
           this.total = Number(response.headers['x-total-count']) || 0
           this.listLoading = false
         })

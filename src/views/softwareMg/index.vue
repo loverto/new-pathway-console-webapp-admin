@@ -51,6 +51,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="最后一次被使用时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lastUsedDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="操作" width="100" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>

@@ -40,9 +40,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="100" fixed="right">
+      <el-table-column align="center" label="最后一次上线时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lastLivedDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="200" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" class="edit-btn" size="small" icon="el-icon-edit" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -122,6 +129,9 @@ export default {
     getList() {
       this.listLoading = true
       const data = {
+        status: {
+          equals: true
+        },
         page: this.listQuery.page - 1,
         size: this.listQuery.pageSize,
         sort: 'lastModifiedDate,desc'
@@ -142,11 +152,13 @@ export default {
         console.log(response)
         response.forEach((re) => {
           re.data.computers.forEach((c) => {
-            c.groupName = re.data.name
-            this.groupComputer.push(c)
+            if (c.status === true) {
+              c.groupName = re.data.name
+              this.groupComputer.push(c)
+            }
           })
         })
-        return Api.getList(data)
+        return Api.getListByFilter(data)
       }).then(response => {
         let computers = []
         this.total = Number(response.headers['x-total-count']) || 0
@@ -217,6 +229,28 @@ export default {
       this.curProd = row
       this.title = '编辑计算机名称'
       this.buttonText = '编辑'
+    },
+    handleDelete(row) {
+      row.status = false
+      // 删除警告提示文案
+      this.$confirm('此操作将永久删除该计算机, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        Api.deleteCompute(row, 'put').then(response => {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          })
+          this.loadAll()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
     handleAdd(row) {
       this.showMask = true

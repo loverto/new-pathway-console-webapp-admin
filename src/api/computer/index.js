@@ -3,6 +3,7 @@
  */
 
 import request from '@/utils/request'
+import qs from 'qs'
 
 /**
  * 获取计算机名称列表
@@ -14,6 +15,17 @@ export function getList(query) {
     params: query
   })
 }
+/**
+ * 获取计算机名称列表
+ */
+export function getListByFilter(query) {
+  return request({
+    url: '/api/computers',
+    method: 'get',
+    params: query,
+    paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat', allowDots: true })
+  })
+}
 
 /**
  * 新增或更新计算机名称
@@ -22,6 +34,14 @@ export function getList(query) {
 export function saveOrUpdate(data, method = 'post') {
   return request({
     url: '/api/computers',
+    method,
+    data
+  })
+}
+
+export function deleteCompute(data, method = 'post') {
+  return request({
+    url: `/api/computers/${data.id}`,
     method,
     data
   })
