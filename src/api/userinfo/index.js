@@ -20,8 +20,10 @@ export function getList(query) {
  */
 
 export function saveOrUpdate(data, method = 'post') {
+  // mehod 默认为post，如果指定了put ,则路径中需要把id拼接上
+  const rurl = method === 'put' ? `/api/userinfos/${data.id}` : '/api/userinfos'
   return request({
-    url: '/api/userinfos',
+    url: rurl,
     method,
     data
   })

@@ -32,8 +32,10 @@ export function getListByFilter(query) {
  */
 
 export function saveOrUpdate(data, method = 'post') {
+  // mehod 默认为post，如果指定了put ,则路径中需要把id拼接上
+  const rurl = method === 'put' ? `/api/authorization-infos/${data.id}` : '/api/authorization-infos'
   return request({
-    url: '/api/authorization-infos',
+    url: rurl,
     method,
     data
   })

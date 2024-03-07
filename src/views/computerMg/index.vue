@@ -108,7 +108,7 @@ export default {
       studioConfig: {},
       listQuery: {
         page: 1,
-        pageSize: 50
+        pageSize: 1000
       },
       showMask: false,
       showFontMask: false,
@@ -238,7 +238,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        Api.deleteCompute(row, 'put').then(response => {
+        Api.deleteCompute(row, 'delete').then(response => {
           this.$message({
             message: '删除成功',
             type: 'success'
