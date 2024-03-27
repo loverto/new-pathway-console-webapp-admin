@@ -65,6 +65,8 @@ export default {
           if (this.ruleForm.id || this.buttonText === '编辑') {
             method = 'put'
           }
+          // 增加最后使用时间 lastUsedDate  格式如下 2024-03-25T01:10:54.855461Z
+          this.ruleForm.lastUsedDate = new Date().toISOString()
 
           // 新增或保存操作
           saveOrUpdate(this.ruleForm, method).then(response => {

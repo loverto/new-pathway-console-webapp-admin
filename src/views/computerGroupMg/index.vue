@@ -64,7 +64,7 @@
       class="product-edit__dialog"
       @close="handleClose"
     >
-      <add-page :form-data="curProd" :list1="curComputerList" :list2="computerList" button-text="编辑" />
+      <add-page :form-data="curProd" :list1="curComputerList" :list1title="已分组计算机" :list2title="未分组计算机" :list2="computerList" button-text="编辑" />
     </el-dialog>
 
   </div>
